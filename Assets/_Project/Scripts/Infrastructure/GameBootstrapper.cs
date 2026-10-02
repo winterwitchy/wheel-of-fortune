@@ -9,8 +9,10 @@ namespace WheelGame.Infrastructure
     public sealed class GameBootstrapper : MonoBehaviour
     {
         [SerializeField] private GameConfig _config;
+        [SerializeField] private GoldView _goldView;
         [SerializeField] private ZoneInfoView _zoneInfoView;
         [SerializeField] private WheelView _wheelView;
+        [SerializeField] private WheelEffectsView _wheelEffectsView;
         [SerializeField] private RewardsPanelView _rewardsPanelView;
         [SerializeField] private BombPopupView _bombPopupView;
         [SerializeField] private CashOutPopupView _cashOutPopupView;
@@ -27,8 +29,9 @@ namespace WheelGame.Infrastructure
             var wallet = new InMemoryWallet(_config.StartingGold);
 
             _presenter = new GamePresenter(
-                session, wallet, _config.ReviveCost,
-                _zoneInfoView, _wheelView, _rewardsPanelView, _bombPopupView, _cashOutPopupView);
+                session, wallet, _config.ReviveCost, _config.Generation.GoldReward,
+                _goldView, _zoneInfoView, _wheelView, _wheelEffectsView,
+                _rewardsPanelView, _bombPopupView, _cashOutPopupView);
 
             _presenter.Initialize();
         }

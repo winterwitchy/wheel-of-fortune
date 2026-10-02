@@ -22,5 +22,15 @@ namespace WheelGame.Tests.EditMode
             Assert.IsFalse(wallet.TrySpend(25));
             Assert.AreEqual(10, wallet.Gold);
         }
+
+        [Test]
+        public void Add_IncreasesGold()
+        {
+            var wallet = new InMemoryWallet(10);
+
+            wallet.Add(40);
+
+            Assert.AreEqual(50, wallet.Gold);
+        }
     }
 }
