@@ -42,14 +42,30 @@ MonoBehaviour:
       _divisor: 2
       _offset: 1
       _step: 5
-    _consumableRewards: []
+    _consumableRewards:
+    - {fileID: 11400000, guid: 07a06813f06889e4fb9651611e3d3310, type: 2}
+    - {fileID: 11400000, guid: 37bd8de7316c1164c97a2dca7e5b8d6d, type: 2}
+    - {fileID: 11400000, guid: d768e1aaff150a9429c0160b4283b284, type: 2}
+    - {fileID: 11400000, guid: 766c0be734e39f14ab48350e6b44df55, type: 2}
+    - {fileID: 11400000, guid: 765ffdba15a6c8b4d845e5553228aa2a, type: 2}
     _consumableFormula:
       _growth: 3
       _divisor: 1
       _offset: 0
       _step: 2
-    _safeSkinRewards: []
-    _superSkinRewards: []
+    _safeSkinRewards:
+    - {fileID: 11400000, guid: 86569333fb6e97d49a1d853dbad2dfd9, type: 2}
+    - {fileID: 11400000, guid: 72856841118b435419c8d6e2136e2162, type: 2}
+    - {fileID: 11400000, guid: 7a5fd182bad54144f934ec6ba910992b, type: 2}
+    _superSkinRewards:
+    - {fileID: 11400000, guid: 18f411220a590934e9dd1def8a8bceb9, type: 2}
+    - {fileID: 11400000, guid: 4bdc7c795d131e34b913356b5cc35a94, type: 2}
+    - {fileID: 11400000, guid: 2c526677228369d4ca903b34f969fe75, type: 2}
+    - {fileID: 11400000, guid: b2ca52a1e8e69844397cd77712424695, type: 2}
+    - {fileID: 11400000, guid: 41d925502ba2f4c4c8abf02c44ad5214, type: 2}
+    - {fileID: 11400000, guid: 04c6920791a514a43aca5351e8c9a1f0, type: 2}
+    - {fileID: 11400000, guid: 84ba324df70a732499be9e2d0549a60f, type: 2}
+    - {fileID: 11400000, guid: 2953f29754f39b54ba1a5dc57720ed86, type: 2}
     _chestProgression:
       _sequence:
       - {fileID: 11400000, guid: 25dd427d0bba6404687b2417c263d8dc, type: 2}
