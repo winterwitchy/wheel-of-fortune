@@ -10,6 +10,7 @@ namespace WheelGame.Infrastructure
     {
         [SerializeField] private GameConfig _config;
         [SerializeField] private WheelView _wheelView;
+        [SerializeField] private RewardsPanelView _rewardsPanelView;
 
         private GamePresenter _presenter;
 
@@ -21,7 +22,7 @@ namespace WheelGame.Infrastructure
             var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, _config.SliceOverrides, random);
             var session = new WheelSession(zoneRules, wheelGenerator, _config.LeaveRule, random);
 
-            _presenter = new GamePresenter(session, _wheelView);
+            _presenter = new GamePresenter(session, _wheelView, _rewardsPanelView);
             _presenter.Initialize();
         }
 
