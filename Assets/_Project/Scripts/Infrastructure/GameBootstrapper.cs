@@ -11,6 +11,8 @@ namespace WheelGame.Infrastructure
         [SerializeField] private GameConfig _config;
         [SerializeField] private WheelView _wheelView;
         [SerializeField] private RewardsPanelView _rewardsPanelView;
+        [SerializeField] private BombPopupView _bombPopupView;
+        [SerializeField] private CashOutPopupView _cashOutPopupView;
 
         private GamePresenter _presenter;
 
@@ -21,8 +23,12 @@ namespace WheelGame.Infrastructure
             var proceduralGenerator = new ProceduralWheelGenerator(_config.Generation, random);
             var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, _config.SliceOverrides, random);
             var session = new WheelSession(zoneRules, wheelGenerator, _config.LeaveRule, random);
+            var wallet = new InMemoryWallet(_config.StartingGold);
 
-            _presenter = new GamePresenter(session, _wheelView, _rewardsPanelView);
+            _presenter = new GamePresenter(
+                session, wallet, _config.ReviveCost,
+                _wheelView, _rewardsPanelView, _bombPopupView, _cashOutPopupView);
+
             _presenter.Initialize();
         }
 

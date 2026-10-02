@@ -9,14 +9,25 @@ namespace WheelGame.Presentation
     public sealed class GamePresenter : IDisposable
     {
         private readonly WheelSession _session;
+        private readonly IWallet _wallet;
+        private readonly int _reviveCost;
         private readonly WheelView _wheelView;
         private readonly RewardsPanelView _rewardsPanelView;
+        private readonly BombPopupView _bombPopupView;
+        private readonly CashOutPopupView _cashOutPopupView;
 
-        public GamePresenter(WheelSession session, WheelView wheelView, RewardsPanelView rewardsPanelView)
+        public GamePresenter(
+            WheelSession session, IWallet wallet, int reviveCost,
+            WheelView wheelView, RewardsPanelView rewardsPanelView,
+            BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
             _session = session;
+            _wallet = wallet;
+            _reviveCost = reviveCost;
             _wheelView = wheelView;
             _rewardsPanelView = rewardsPanelView;
+            _bombPopupView = bombPopupView;
+            _cashOutPopupView = cashOutPopupView;
         }
 
         public void Initialize()
@@ -28,6 +39,9 @@ namespace WheelGame.Presentation
             _session.CashedOut += HandleCashedOut;
             _wheelView.SpinClicked += HandleSpinClicked;
             _rewardsPanelView.LeaveClicked += HandleLeaveClicked;
+            _bombPopupView.GiveUpClicked += HandleGiveUpClicked;
+            _bombPopupView.ReviveClicked += HandleReviveClicked;
+            _cashOutPopupView.ContinueClicked += HandleContinueClicked;
 
             _session.StartRun();
         }
@@ -41,6 +55,9 @@ namespace WheelGame.Presentation
             _session.CashedOut -= HandleCashedOut;
             _wheelView.SpinClicked -= HandleSpinClicked;
             _rewardsPanelView.LeaveClicked -= HandleLeaveClicked;
+            _bombPopupView.GiveUpClicked -= HandleGiveUpClicked;
+            _bombPopupView.ReviveClicked -= HandleReviveClicked;
+            _cashOutPopupView.ContinueClicked -= HandleContinueClicked;
         }
 
         private void HandleSpinClicked()
@@ -74,11 +91,32 @@ namespace WheelGame.Presentation
 
         private void HandleBombHit()
         {
+            _bombPopupView.Show(_reviveCost, _wallet.Gold >= _reviveCost);
+        }
+
+        private void HandleGiveUpClicked()
+        {
+            _bombPopupView.Close();
             _session.StartRun();
+        }
+
+        private void HandleReviveClicked()
+        {
+            if (!_wallet.TrySpend(_reviveCost))
+                return;
+
+            _bombPopupView.Close();
+            _session.Revive();
         }
 
         private void HandleCashedOut(IReadOnlyDictionary<RewardItemData, int> rewards)
         {
+            _cashOutPopupView.Show(rewards);
+        }
+
+        private void HandleContinueClicked()
+        {
+            _cashOutPopupView.Close();
             _session.StartRun();
         }
     }

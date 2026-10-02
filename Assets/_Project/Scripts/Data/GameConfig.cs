@@ -14,6 +14,10 @@ namespace WheelGame.Data
         [Header("Rules")]
         [SerializeField] private LeaveRule _leaveRule = LeaveRule.BeforeAnySpin;
 
+        [Header("Revive")]
+        [SerializeField, Min(0)] private int _startingGold = 100;
+        [SerializeField, Min(1)] private int _reviveCost = 25;
+
         [Header("Wheel Generation")]
         [SerializeField] private WheelGenerationSettings _generation = new WheelGenerationSettings();
 
@@ -23,6 +27,8 @@ namespace WheelGame.Data
         public int SafeInterval => _safeInterval;
         public int SuperInterval => _superInterval;
         public LeaveRule LeaveRule => _leaveRule;
+        public int StartingGold => _startingGold;
+        public int ReviveCost => _reviveCost;
         public WheelGenerationSettings Generation => _generation;
         public IReadOnlyList<SliceOverride> SliceOverrides => _sliceOverrides;
 
