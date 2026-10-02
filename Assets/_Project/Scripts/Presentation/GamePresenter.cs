@@ -11,6 +11,7 @@ namespace WheelGame.Presentation
         private readonly WheelSession _session;
         private readonly IWallet _wallet;
         private readonly int _reviveCost;
+        private readonly ZoneInfoView _zoneInfoView;
         private readonly WheelView _wheelView;
         private readonly RewardsPanelView _rewardsPanelView;
         private readonly BombPopupView _bombPopupView;
@@ -18,12 +19,13 @@ namespace WheelGame.Presentation
 
         public GamePresenter(
             WheelSession session, IWallet wallet, int reviveCost,
-            WheelView wheelView, RewardsPanelView rewardsPanelView,
+            ZoneInfoView zoneInfoView, WheelView wheelView, RewardsPanelView rewardsPanelView,
             BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
             _session = session;
             _wallet = wallet;
             _reviveCost = reviveCost;
+            _zoneInfoView = zoneInfoView;
             _wheelView = wheelView;
             _rewardsPanelView = rewardsPanelView;
             _bombPopupView = bombPopupView;
@@ -79,6 +81,8 @@ namespace WheelGame.Presentation
 
         private void HandleZoneStarted(int zone, ZoneType zoneType, IReadOnlyList<WheelSliceEntry> wheel)
         {
+            var nextRiskFreeZone = _session.NextRiskFreeZone;
+            _zoneInfoView.Show(zone, zoneType, nextRiskFreeZone, _session.GetZoneType(nextRiskFreeZone));
             _wheelView.Show(zoneType, wheel);
             _rewardsPanelView.Show(_session.CollectedRewards);
         }

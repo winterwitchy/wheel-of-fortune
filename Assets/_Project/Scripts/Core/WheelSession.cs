@@ -37,6 +37,12 @@ namespace WheelGame.Core
 
         public bool CanSpin => State == SessionState.ReadyToSpin;
         public bool CanLeave => State == SessionState.ReadyToSpin && IsLeaveAllowedInCurrentZone();
+        public int NextRiskFreeZone => _zoneRules.GetNextRiskFreeZone(CurrentZone);
+
+        public ZoneType GetZoneType(int zone)
+        {
+            return _zoneRules.GetZoneType(zone);
+        }
 
         public void StartRun()
         {

@@ -9,6 +9,7 @@ namespace WheelGame.Infrastructure
     public sealed class GameBootstrapper : MonoBehaviour
     {
         [SerializeField] private GameConfig _config;
+        [SerializeField] private ZoneInfoView _zoneInfoView;
         [SerializeField] private WheelView _wheelView;
         [SerializeField] private RewardsPanelView _rewardsPanelView;
         [SerializeField] private BombPopupView _bombPopupView;
@@ -27,7 +28,7 @@ namespace WheelGame.Infrastructure
 
             _presenter = new GamePresenter(
                 session, wallet, _config.ReviveCost,
-                _wheelView, _rewardsPanelView, _bombPopupView, _cashOutPopupView);
+                _zoneInfoView, _wheelView, _rewardsPanelView, _bombPopupView, _cashOutPopupView);
 
             _presenter.Initialize();
         }
