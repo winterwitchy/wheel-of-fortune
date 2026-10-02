@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a34cc9f32423d84bb2698c620c5a7f9, type: 3}
+  m_Name: game_config
+  m_EditorClassIdentifier: 
+  _safeInterval: 5
+  _superInterval: 30
+  _leaveRule: 0
+  _generation:
+    _cashReward: {fileID: 11400000, guid: 6649bbb089447064eb74bd6a7b919f63, type: 2}
+    _cashFormula:
+      _growth: 2
+      _divisor: 10
+      _offset: 1
+      _step: 25
+    _goldReward: {fileID: 11400000, guid: 6bff5ef7fbb8ee143a811b9b14a14eab, type: 2}
+    _goldFormula:
+      _growth: 1
+      _divisor: 1
+      _offset: 0
+      _step: 1
+    _pointRewards:
+    - {fileID: 11400000, guid: 6f36ae45d9f1cae4b903beafce67d231, type: 2}
+    - {fileID: 11400000, guid: c925a91086472d74b877598ff996524e, type: 2}
+    - {fileID: 11400000, guid: 39bd86c6f4550e14dbf43d65d03b1e9d, type: 2}
+    - {fileID: 11400000, guid: d5e2877d215bd154b9664e49be8a8fdb, type: 2}
+    - {fileID: 11400000, guid: 6d80dd2817ffe3442b751867bed799c1, type: 2}
+    - {fileID: 11400000, guid: 82d13303741aa814ab0979162a5800c8, type: 2}
+    - {fileID: 11400000, guid: ce0b80dca3db2584ba69f0e1da5998bb, type: 2}
+    - {fileID: 11400000, guid: bd732c41cd9ac244b810dce3b98b4cf0, type: 2}
+    _pointFormula:
+      _growth: 1
+      _divisor: 2
+      _offset: 1
+      _step: 5
+    _consumableRewards: []
+    _consumableFormula:
+      _growth: 3
+      _divisor: 1
+      _offset: 0
+      _step: 2
+    _safeSkinRewards: []
+    _superSkinRewards: []
+    _chestProgression:
+      _sequence:
+      - {fileID: 11400000, guid: 25dd427d0bba6404687b2417c263d8dc, type: 2}
+      - {fileID: 11400000, guid: 3232ec2510e69554fb3a9cc152fffc39, type: 2}
+      - {fileID: 11400000, guid: f6788fbcaaa57194e98fb64e49cbe586, type: 2}
+      - {fileID: 11400000, guid: 0f608d4621c4fe6408c50e6664db3bd6, type: 2}
+      - {fileID: 11400000, guid: 80219585cc1af034394884835c5aaf31, type: 2}
+      - {fileID: 11400000, guid: 76f2cdc1f804e2e4ca91803394c9d226, type: 2}
+      - {fileID: 11400000, guid: b930d94dbd185d64e963b1e1cd0e6ab4, type: 2}
+      _windowSize: 3
+      _eraLength: 30
+    _superChestReward: {fileID: 11400000, guid: b930d94dbd185d64e963b1e1cd0e6ab4, type: 2}
+    _safeMultiplier: 1
+    _superMultiplier: 5
+  _sliceOverrides: []

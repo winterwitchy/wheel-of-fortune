@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace WheelGame.Data
 {
@@ -9,19 +10,25 @@ namespace WheelGame.Data
     {
         [Header("Cash")]
         [SerializeField] private RewardItemData _cashReward;
-        [SerializeField] private AmountFormula _cashFormula = new AmountFormula(2, 10, 1, 25);
+        [SerializeField] private AmountFormula _cashFormula = new AmountFormula(GrowthCurve.Quadratic, 10, 1, 25);
 
         [Header("Gold")]
         [SerializeField] private RewardItemData _goldReward;
-        [SerializeField] private AmountFormula _goldFormula = new AmountFormula(1, 1, 0, 1);
+        [SerializeField] private AmountFormula _goldFormula = new AmountFormula(GrowthCurve.Linear, 1, 0, 1);
 
         [Header("Points")]
         [SerializeField] private List<RewardItemData> _pointRewards = new List<RewardItemData>();
-        [SerializeField] private AmountFormula _pointFormula = new AmountFormula(1, 2, 1, 5);
+        [SerializeField] private AmountFormula _pointFormula = new AmountFormula(GrowthCurve.Linear, 2, 1, 5);
 
-        [Header("Items")]
-        [SerializeField] private List<RewardItemData> _itemRewards = new List<RewardItemData>();
-        [SerializeField] private List<RewardItemData> _superItemRewards = new List<RewardItemData>();
+        [Header("Consumables")]
+        [FormerlySerializedAs("_itemRewards")]
+        [SerializeField] private List<RewardItemData> _consumableRewards = new List<RewardItemData>();
+        [SerializeField] private AmountFormula _consumableFormula = new AmountFormula(GrowthCurve.SquareRoot, 1, 0, 2);
+
+        [Header("Skins")]
+        [SerializeField] private List<RewardItemData> _safeSkinRewards = new List<RewardItemData>();
+        [FormerlySerializedAs("_superItemRewards")]
+        [SerializeField] private List<RewardItemData> _superSkinRewards = new List<RewardItemData>();
 
         [Header("Chests")]
         [SerializeField] private ChestProgression _chestProgression = new ChestProgression();
@@ -37,7 +44,8 @@ namespace WheelGame.Data
             RewardItemData cashReward, AmountFormula cashFormula,
             RewardItemData goldReward, AmountFormula goldFormula,
             List<RewardItemData> pointRewards, AmountFormula pointFormula,
-            List<RewardItemData> itemRewards, List<RewardItemData> superItemRewards,
+            List<RewardItemData> consumableRewards, AmountFormula consumableFormula,
+            List<RewardItemData> safeSkinRewards, List<RewardItemData> superSkinRewards,
             ChestProgression chestProgression, RewardItemData superChestReward,
             int safeMultiplier, int superMultiplier)
         {
@@ -47,8 +55,10 @@ namespace WheelGame.Data
             _goldFormula = goldFormula;
             _pointRewards = pointRewards;
             _pointFormula = pointFormula;
-            _itemRewards = itemRewards;
-            _superItemRewards = superItemRewards;
+            _consumableRewards = consumableRewards;
+            _consumableFormula = consumableFormula;
+            _safeSkinRewards = safeSkinRewards;
+            _superSkinRewards = superSkinRewards;
             _chestProgression = chestProgression;
             _superChestReward = superChestReward;
             _safeMultiplier = safeMultiplier;
@@ -61,8 +71,10 @@ namespace WheelGame.Data
         public AmountFormula GoldFormula => _goldFormula;
         public IReadOnlyList<RewardItemData> PointRewards => _pointRewards;
         public AmountFormula PointFormula => _pointFormula;
-        public IReadOnlyList<RewardItemData> ItemRewards => _itemRewards;
-        public IReadOnlyList<RewardItemData> SuperItemRewards => _superItemRewards;
+        public IReadOnlyList<RewardItemData> ConsumableRewards => _consumableRewards;
+        public AmountFormula ConsumableFormula => _consumableFormula;
+        public IReadOnlyList<RewardItemData> SafeSkinRewards => _safeSkinRewards;
+        public IReadOnlyList<RewardItemData> SuperSkinRewards => _superSkinRewards;
         public ChestProgression ChestProgression => _chestProgression;
         public RewardItemData SuperChestReward => _superChestReward;
         public int SafeMultiplier => _safeMultiplier;
@@ -84,11 +96,14 @@ namespace WheelGame.Data
             if (_pointRewards.Count == 0)
                 errors.Add("Point reward pool is empty.");
 
-            if (_itemRewards.Count == 0)
-                errors.Add("Item reward pool is empty.");
+            if (_consumableRewards.Count == 0)
+                errors.Add("Consumable reward pool is empty.");
 
-            if (_superItemRewards.Count == 0)
-                errors.Add("Super item reward pool is empty.");
+            if (_safeSkinRewards.Count == 0)
+                errors.Add("Safe skin reward pool is empty.");
+
+            if (_superSkinRewards.Count == 0)
+                errors.Add("Super skin reward pool is empty.");
 
             if (_chestProgression.Sequence.Count == 0)
                 errors.Add("Chest progression is empty.");

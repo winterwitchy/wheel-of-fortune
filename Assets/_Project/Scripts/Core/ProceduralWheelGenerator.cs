@@ -10,7 +10,7 @@ namespace WheelGame.Core
             Cash,
             Gold,
             Points,
-            Item
+            Consumable
         }
 
         private const int RewardSlotCount = 4;
@@ -30,12 +30,10 @@ namespace WheelGame.Core
             var slices = new List<WheelSliceEntry>(WheelLayout.SliceCount);
 
             for (var slot = 0; slot < RewardSlotCount; slot++)
-                slices.Add(CreateRewardSlot((RewardSlot)slot, zone, zoneType, multiplier));
+                slices.Add(CreateRewardSlot((RewardSlot)slot, zone, multiplier));
 
-            var bonusSlot = (RewardSlot)_random.Range(0, RewardSlotCount);
-            slices.Add(CreateRewardSlot(bonusSlot, zone, zoneType, multiplier));
-
-            slices.Add(zoneType == ZoneType.Normal ? WheelSliceEntry.CreateBomb() : CreateChest(zone, zoneType));
+            slices.Add(CreateBonusSlot(zone, zoneType, multiplier));
+            slices.Add(CreateBombSlot(zoneType));
 
             while (slices.Count < WheelLayout.SliceCount)
                 slices.Add(CreateChest(zone, zoneType));
@@ -54,20 +52,39 @@ namespace WheelGame.Core
             };
         }
 
-        private WheelSliceEntry CreateRewardSlot(RewardSlot slot, int zone, ZoneType zoneType, int multiplier)
+        private WheelSliceEntry CreateRewardSlot(RewardSlot slot, int zone, int multiplier)
         {
             return slot switch
             {
                 RewardSlot.Cash => WheelSliceEntry.CreateReward(_settings.CashReward, _settings.CashFormula.Evaluate(zone) * multiplier),
                 RewardSlot.Gold => WheelSliceEntry.CreateReward(_settings.GoldReward, _settings.GoldFormula.Evaluate(zone) * multiplier),
                 RewardSlot.Points => WheelSliceEntry.CreateReward(PickRandom(_settings.PointRewards), _settings.PointFormula.Evaluate(zone) * multiplier),
-                _ => WheelSliceEntry.CreateReward(PickRandom(GetItemPool(zoneType)), 1)
+                _ => WheelSliceEntry.CreateReward(PickRandom(_settings.ConsumableRewards), _settings.ConsumableFormula.Evaluate(zone) * multiplier)
             };
         }
 
-        private IReadOnlyList<RewardItemData> GetItemPool(ZoneType zoneType)
+        private WheelSliceEntry CreateBonusSlot(int zone, ZoneType zoneType, int multiplier)
         {
-            return zoneType == ZoneType.Super ? _settings.SuperItemRewards : _settings.ItemRewards;
+            if (zoneType == ZoneType.Super)
+                return CreateSkin(_settings.SuperSkinRewards);
+
+            var slot = (RewardSlot)_random.Range(0, RewardSlotCount);
+            return CreateRewardSlot(slot, zone, multiplier);
+        }
+
+        private WheelSliceEntry CreateBombSlot(ZoneType zoneType)
+        {
+            return zoneType switch
+            {
+                ZoneType.Super => CreateSkin(_settings.SuperSkinRewards),
+                ZoneType.Safe => CreateSkin(_settings.SafeSkinRewards),
+                _ => WheelSliceEntry.CreateBomb()
+            };
+        }
+
+        private WheelSliceEntry CreateSkin(IReadOnlyList<RewardItemData> pool)
+        {
+            return WheelSliceEntry.CreateReward(PickRandom(pool), 1);
         }
 
         private WheelSliceEntry CreateChest(int zone, ZoneType zoneType)
