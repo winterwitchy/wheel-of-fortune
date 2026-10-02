@@ -274,6 +274,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 313927608}
+  - component: {fileID: 313927609}
   m_Layer: 5
   m_Name: ui_panel_wheel
   m_TagString: Untagged
@@ -304,6 +305,47 @@ RectTransform:
   m_AnchoredPosition: {x: 180, y: -60}
   m_SizeDelta: {x: 760, y: 760}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &313927609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313927607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c8b20345fd1e154bb6a5ff59c40cac0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rotator: {fileID: 288944664}
+  _sliceContainer: {fileID: 856757947}
+  _slicePrefab: {fileID: 88377304217784344, guid: 983655621701acf4680b17f58282f8c2, type: 3}
+  _baseImage: {fileID: 1401697929}
+  _indicatorImage: {fileID: 1127822598}
+  _titleText: {fileID: 540804411}
+  _spinButton: {fileID: 1106272459}
+  _sliceRadius: 205
+  _angleOffset: 0
+  _spinDuration: 3.5
+  _fullTurns: 5
+  _landingJitter: 0.3
+  _bombSprite: {fileID: 21300000, guid: fb8157bc4943f5049809664fe6c67bb6, type: 3}
+  _skins:
+  - _zoneType: 0
+    _title: BRONZE SPIN
+    _titleColor: {r: 0.9098039, g: 0.6392157, b: 0.36078432, a: 0}
+    _baseSprite: {fileID: 21300000, guid: a8e6e64d9fb2d2747a9521d202d75dce, type: 3}
+    _indicatorSprite: {fileID: 21300000, guid: 1a96b57c600e63e4bbc0dddbea2cde2e, type: 3}
+  - _zoneType: 1
+    _title: SILVER SPIN
+    _titleColor: {r: 0.8509804, g: 0.8509804, b: 0.8509804, a: 0}
+    _baseSprite: {fileID: 21300000, guid: 6b4d44db160ed924aaa56cc7babc8a1e, type: 3}
+    _indicatorSprite: {fileID: 21300000, guid: 57e6c355f7081e046871c8b26263e440, type: 3}
+  - _zoneType: 2
+    _title: GOLDEN SPIN
+    _titleColor: {r: 0.9490196, g: 0.75686276, b: 0.30588236, a: 0}
+    _baseSprite: {fileID: 21300000, guid: 45d6c0be51077394abef4c22c21c7123, type: 3}
+    _indicatorSprite: {fileID: 21300000, guid: d1ab2103d50a82447996b31192c7ee63, type: 3}
 --- !u!1 &455304225
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +403,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -401,7 +443,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.105882354, g: 0.11576691, b: 0.13333334, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -516,8 +558,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4285382911
-  m_fontColor: {r: 1, g: 0.75411415, b: 0.4292453, a: 1}
+    rgba: 4284261352
+  m_fontColor: {r: 0.9098039, g: 0.6392157, b: 0.36078432, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1069,3 +1111,49 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 140}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!1 &1812363710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1812363712}
+  - component: {fileID: 1812363711}
+  m_Layer: 0
+  m_Name: GameBootstrapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1812363711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812363710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf350e261f40e545b6468d7ac517c0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 11400000, guid: a0a80b5212d60f84c97efd84ca51d8ae, type: 2}
+  _wheelView: {fileID: 313927609}
+--- !u!4 &1812363712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812363710}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2521.346, y: 1233.8455, z: -9.633365}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
