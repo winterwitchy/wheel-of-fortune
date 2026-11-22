@@ -12,7 +12,7 @@ namespace WheelGame.Data
         [SerializeField, Min(1)] private int _superInterval = 30;
 
         [Header("Rules")]
-        [SerializeField] private LeaveRule _leaveRule = LeaveRule.BeforeAnySpin;
+        [SerializeField] private LeaveRule _leaveRule = LeaveRule.AfterFirstReward;
 
         [Header("Revive")]
         [SerializeField, Min(0)] private int _startingGold = 100;

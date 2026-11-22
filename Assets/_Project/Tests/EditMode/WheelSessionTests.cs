@@ -73,21 +73,34 @@ namespace WheelGame.Tests.EditMode
         }
 
         [Test]
-        public void Leave_AtFirstZoneWithoutSpinning_CashesOut()
+        public void CanLeave_BeforeAnyReward_IsFalse()
         {
             var session = CreateSession();
             session.StartRun();
 
-            session.Leave();
-
-            Assert.AreEqual(SessionState.CashedOut, session.State);
+            Assert.IsFalse(session.CanLeave);
+            Assert.Throws<InvalidOperationException>(() => session.Leave());
         }
 
         [Test]
-        public void CanLeave_BeforeAnySpin_ClosesDuringSpinAndReopensInNextZone()
+        public void CanLeave_AfterRevivingWithoutRewards_IsFalse()
         {
-            var session = CreateSession(LeaveRule.BeforeAnySpin, RewardIndex);
+            var session = CreateSession(BombIndex);
             session.StartRun();
+            SpinAndComplete(session);
+
+            session.Revive();
+
+            Assert.AreEqual(SessionState.ReadyToSpin, session.State);
+            Assert.IsFalse(session.CanLeave);
+        }
+
+        [Test]
+        public void CanLeave_AfterFirstReward_ClosesDuringSpinAndReopensInNextZone()
+        {
+            var session = CreateSession(LeaveRule.AfterFirstReward, RewardIndex, RewardIndex);
+            session.StartRun();
+            SpinAndComplete(session);
 
             Assert.IsTrue(session.CanLeave);
 
@@ -96,7 +109,19 @@ namespace WheelGame.Tests.EditMode
 
             session.CompleteSpin();
             Assert.IsTrue(session.CanLeave);
-            Assert.AreEqual(2, session.CurrentZone);
+            Assert.AreEqual(3, session.CurrentZone);
+        }
+
+        [Test]
+        public void Leave_AfterFirstReward_CashesOut()
+        {
+            var session = CreateSession(RewardIndex);
+            session.StartRun();
+            SpinAndComplete(session);
+
+            session.Leave();
+
+            Assert.AreEqual(SessionState.CashedOut, session.State);
         }
 
         [Test]
@@ -139,7 +164,7 @@ namespace WheelGame.Tests.EditMode
 
         private WheelSession CreateSession(params int[] spinIndices)
         {
-            return CreateSession(LeaveRule.BeforeAnySpin, spinIndices);
+            return CreateSession(LeaveRule.AfterFirstReward, spinIndices);
         }
 
         private WheelSession CreateSession(LeaveRule leaveRule, params int[] spinIndices)

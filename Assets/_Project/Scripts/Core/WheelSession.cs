@@ -36,7 +36,31 @@ namespace WheelGame.Core
         public IReadOnlyDictionary<RewardItemData, int> CollectedRewards => _collectedRewards;
 
         public bool CanSpin => State == SessionState.ReadyToSpin;
-        public bool CanLeave => State == SessionState.ReadyToSpin && IsLeaveAllowedInCurrentZone();
+        public bool CanLeave
+        {
+            get
+            {
+                if (State != SessionState.ReadyToSpin)
+                {
+                    return false;
+                }
+
+                if (!HasCollectedRewards)
+                {
+                    return false;
+                }
+
+                return IsLeaveAllowedInCurrentZone();
+            }
+        }
+
+        public bool HasCollectedRewards
+        {
+            get
+            {
+                return _collectedRewards.Count > 0;
+            }
+        }
         public int NextRiskFreeZone => _zoneRules.GetNextRiskFreeZone(CurrentZone);
 
         public ZoneType GetZoneType(int zone)
@@ -101,11 +125,12 @@ namespace WheelGame.Core
 
         private bool IsLeaveAllowedInCurrentZone()
         {
-            return _leaveRule switch
+            if (_leaveRule == LeaveRule.SafeZonesOnly)
             {
-                LeaveRule.SafeZonesOnly => CurrentZoneType != ZoneType.Normal,
-                _ => true
-            };
+                return CurrentZoneType != ZoneType.Normal;
+            }
+
+            return true;
         }
 
         private void EnterZone(int zone)
