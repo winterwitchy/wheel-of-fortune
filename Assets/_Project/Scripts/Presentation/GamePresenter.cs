@@ -10,7 +10,6 @@ namespace WheelGame.Presentation
     {
         private readonly WheelSession _session;
         private readonly IWallet _wallet;
-        private readonly int _reviveCost;
         private readonly RewardItemData _goldReward;
         private readonly GoldView _goldView;
         private readonly ZoneInfoView _zoneInfoView;
@@ -21,13 +20,12 @@ namespace WheelGame.Presentation
         private readonly CashOutPopupView _cashOutPopupView;
 
         public GamePresenter(
-            WheelSession session, IWallet wallet, int reviveCost, RewardItemData goldReward,
+            WheelSession session, IWallet wallet, RewardItemData goldReward,
             GoldView goldView, ZoneInfoView zoneInfoView, WheelView wheelView, WheelEffectsView wheelEffectsView,
             RewardsPanelView rewardsPanelView, BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
             _session = session;
             _wallet = wallet;
-            _reviveCost = reviveCost;
             _goldReward = goldReward;
             _goldView = goldView;
             _zoneInfoView = zoneInfoView;
@@ -108,7 +106,7 @@ namespace WheelGame.Presentation
 
         private void ShowBombPopup()
         {
-            _bombPopupView.Show(_reviveCost, _wallet.Gold >= _reviveCost);
+            _bombPopupView.Show(_session.ReviveCost, _session.CanRevive(_wallet));
         }
 
         private void HandleGiveUpClicked()
@@ -119,12 +117,13 @@ namespace WheelGame.Presentation
 
         private void HandleReviveClicked()
         {
-            if (!_wallet.TrySpend(_reviveCost))
+            if (!_session.TryRevive(_wallet))
+            {
                 return;
+            }
 
             _goldView.Show(_wallet.Gold);
             _bombPopupView.Close();
-            _session.Revive();
         }
 
         private void HandleCashedOut(IReadOnlyDictionary<RewardItemData, int> rewards)

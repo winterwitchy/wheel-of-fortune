@@ -16,7 +16,8 @@ MonoBehaviour:
   _superInterval: 30
   _leaveRule: 0
   _startingGold: 100
-  _reviveCost: 25
+  _reviveBaseCost: 25
+  _reviveCostMultiplier: 2
   _generation:
     _cashReward: {fileID: 11400000, guid: 6649bbb089447064eb74bd6a7b919f63, type: 2}
     _cashFormula:

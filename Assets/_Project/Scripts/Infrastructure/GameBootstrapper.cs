@@ -25,11 +25,12 @@ namespace WheelGame.Infrastructure
             var zoneRules = new ZoneRules(_config.SafeInterval, _config.SuperInterval);
             var proceduralGenerator = new ProceduralWheelGenerator(_config.Generation, random);
             var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, _config.SliceOverrides, random);
-            var session = new WheelSession(zoneRules, wheelGenerator, _config.LeaveRule, random);
+            var revivePricing = new RevivePricing(_config.ReviveBaseCost, _config.ReviveCostMultiplier);
+            var session = new WheelSession(zoneRules, wheelGenerator, _config.LeaveRule, revivePricing, random);
             var wallet = new InMemoryWallet(_config.StartingGold);
 
             _presenter = new GamePresenter(
-                session, wallet, _config.ReviveCost, _config.Generation.GoldReward,
+                session, wallet, _config.Generation.GoldReward,
                 _goldView, _zoneInfoView, _wheelView, _wheelEffectsView,
                 _rewardsPanelView, _bombPopupView, _cashOutPopupView);
 

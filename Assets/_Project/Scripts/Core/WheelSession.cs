@@ -9,16 +9,19 @@ namespace WheelGame.Core
         private readonly ZoneRules _zoneRules;
         private readonly IWheelGenerator _wheelGenerator;
         private readonly LeaveRule _leaveRule;
+        private readonly RevivePricing _revivePricing;
         private readonly IRandomProvider _random;
         private readonly Dictionary<RewardItemData, int> _collectedRewards = new Dictionary<RewardItemData, int>();
 
         private SpinResult _pendingResult;
+        private int _revivesUsed;
 
-        public WheelSession(ZoneRules zoneRules, IWheelGenerator wheelGenerator, LeaveRule leaveRule, IRandomProvider random)
+        public WheelSession(ZoneRules zoneRules, IWheelGenerator wheelGenerator, LeaveRule leaveRule, RevivePricing revivePricing, IRandomProvider random)
         {
             _zoneRules = zoneRules;
             _wheelGenerator = wheelGenerator;
             _leaveRule = leaveRule;
+            _revivePricing = revivePricing;
             _random = random;
         }
 
@@ -63,6 +66,14 @@ namespace WheelGame.Core
         }
         public int NextRiskFreeZone => _zoneRules.GetNextRiskFreeZone(CurrentZone);
 
+        public int ReviveCost
+        {
+            get
+            {
+                return _revivePricing.GetCost(_revivesUsed);
+            }
+        }
+
         public ZoneType GetZoneType(int zone)
         {
             return _zoneRules.GetZoneType(zone);
@@ -71,6 +82,7 @@ namespace WheelGame.Core
         public void StartRun()
         {
             _collectedRewards.Clear();
+            _revivesUsed = 0;
             EnterZone(1);
         }
 
@@ -106,12 +118,31 @@ namespace WheelGame.Core
             EnterZone(CurrentZone + 1);
         }
 
-        public void Revive()
+        public bool CanRevive(IWallet wallet)
         {
             if (State != SessionState.BombHit)
-                throw new InvalidOperationException($"Cannot revive while {State}.");
+            {
+                return false;
+            }
 
+            return wallet.Gold >= ReviveCost;
+        }
+
+        public bool TryRevive(IWallet wallet)
+        {
+            if (State != SessionState.BombHit)
+            {
+                throw new InvalidOperationException($"Cannot revive while {State}.");
+            }
+
+            if (!wallet.TrySpend(ReviveCost))
+            {
+                return false;
+            }
+
+            _revivesUsed++;
             SetState(SessionState.ReadyToSpin);
+            return true;
         }
 
         public void Leave()

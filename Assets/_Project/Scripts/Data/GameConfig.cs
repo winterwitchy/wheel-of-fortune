@@ -16,7 +16,8 @@ namespace WheelGame.Data
 
         [Header("Revive")]
         [SerializeField, Min(0)] private int _startingGold = 100;
-        [SerializeField, Min(1)] private int _reviveCost = 25;
+        [SerializeField, Min(1)] private int _reviveBaseCost = 25;
+        [SerializeField, Min(1f)] private float _reviveCostMultiplier = 2f;
 
         [Header("Wheel Generation")]
         [SerializeField] private WheelGenerationSettings _generation = new WheelGenerationSettings();
@@ -28,7 +29,8 @@ namespace WheelGame.Data
         public int SuperInterval => _superInterval;
         public LeaveRule LeaveRule => _leaveRule;
         public int StartingGold => _startingGold;
-        public int ReviveCost => _reviveCost;
+        public int ReviveBaseCost => _reviveBaseCost;
+        public float ReviveCostMultiplier => _reviveCostMultiplier;
         public WheelGenerationSettings Generation => _generation;
         public IReadOnlyList<SliceOverride> SliceOverrides => _sliceOverrides;
 
