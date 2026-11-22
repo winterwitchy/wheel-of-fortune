@@ -542,7 +542,8 @@ MonoBehaviour:
   _angleOffset: 0
   _spinDuration: 3.5
   _fullTurns: 5
-  _landingJitter: 0.3
+  _settleOvershoot: 0.12
+  _settleDuration: 0.35
   _bombSprite: {fileID: 21300000, guid: fb8157bc4943f5049809664fe6c67bb6, type: 3}
   _skins:
   - _zoneType: 0

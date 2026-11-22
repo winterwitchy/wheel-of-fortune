@@ -45,7 +45,8 @@ namespace WheelGame.Views
         [Header("Spin")]
         [SerializeField, Min(0.1f)] private float _spinDuration = 3.5f;
         [SerializeField, Min(1)] private int _fullTurns = 5;
-        [SerializeField, Range(0f, 0.45f)] private float _landingJitter = 0.3f;
+        [SerializeField, Range(0f, 0.4f)] private float _settleOvershoot = 0.12f;
+        [SerializeField, Min(0f)] private float _settleDuration = 0.35f;
 
         [Header("Visuals")]
         [SerializeField] private Sprite _bombSprite;
@@ -53,6 +54,7 @@ namespace WheelGame.Views
 
         private readonly List<WheelSliceView> _slices = new List<WheelSliceView>();
         private Tween _spinTween;
+        private Action _spinCompleted;
 
         public event Action SpinClicked;
 
@@ -81,19 +83,41 @@ namespace WheelGame.Views
 
         public void PlaySpin(int sliceIndex, Action onComplete)
         {
-            _spinTween?.Kill();
+            if (_spinTween != null)
+            {
+                _spinTween.Kill();
+            }
+
+            _spinCompleted = onComplete;
 
             var current = Mathf.Repeat(_rotator.localEulerAngles.z, 360f);
-            var jitter = UnityEngine.Random.Range(-_landingJitter, _landingJitter) * SliceAngle;
-            var target = sliceIndex * SliceAngle - _angleOffset + jitter;
+            var target = sliceIndex * SliceAngle - _angleOffset;
             var distance = Mathf.Repeat(current - target, 360f);
             var end = current - (_fullTurns * 360f + distance);
+            var overshoot = _settleOvershoot * SliceAngle;
 
-            _spinTween = _rotator
-                .DOLocalRotate(new Vector3(0f, 0f, end), _spinDuration, RotateMode.FastBeyond360)
-                .SetEase(Ease.OutQuart)
-                .SetLink(gameObject)
-                .OnComplete(() => onComplete?.Invoke());
+            var sequence = DOTween.Sequence();
+            sequence.Append(_rotator
+                .DOLocalRotate(new Vector3(0f, 0f, end - overshoot), _spinDuration, RotateMode.FastBeyond360)
+                .SetEase(Ease.OutQuart));
+            sequence.Append(_rotator
+                .DOLocalRotate(new Vector3(0f, 0f, end), _settleDuration, RotateMode.FastBeyond360)
+                .SetEase(Ease.InOutSine));
+            sequence.SetLink(gameObject);
+            sequence.OnComplete(HandleSpinTweenCompleted);
+
+            _spinTween = sequence;
+        }
+
+        private void HandleSpinTweenCompleted()
+        {
+            var callback = _spinCompleted;
+            _spinCompleted = null;
+
+            if (callback != null)
+            {
+                callback.Invoke();
+            }
         }
 
         private void OnEnable()
