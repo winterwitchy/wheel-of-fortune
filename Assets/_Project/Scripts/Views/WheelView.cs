@@ -45,8 +45,7 @@ namespace WheelGame.Views
         [Header("Spin")]
         [SerializeField, Min(0.1f)] private float _spinDuration = 3.5f;
         [SerializeField, Min(1)] private int _fullTurns = 5;
-        [SerializeField, Range(0f, 0.4f)] private float _settleOvershoot = 0.12f;
-        [SerializeField, Min(0f)] private float _settleDuration = 0.35f;
+        [SerializeField] private Ease _spinEase = Ease.OutQuart;
 
         [Header("Visuals")]
         [SerializeField] private Sprite _bombSprite;
@@ -94,19 +93,12 @@ namespace WheelGame.Views
             var target = sliceIndex * SliceAngle - _angleOffset;
             var distance = Mathf.Repeat(current - target, 360f);
             var end = current - (_fullTurns * 360f + distance);
-            var overshoot = _settleOvershoot * SliceAngle;
 
-            var sequence = DOTween.Sequence();
-            sequence.Append(_rotator
-                .DOLocalRotate(new Vector3(0f, 0f, end - overshoot), _spinDuration, RotateMode.FastBeyond360)
-                .SetEase(Ease.OutQuart));
-            sequence.Append(_rotator
-                .DOLocalRotate(new Vector3(0f, 0f, Mathf.Repeat(end, 360f)), _settleDuration, RotateMode.Fast)
-                .SetEase(Ease.InOutSine));
-            sequence.SetLink(gameObject);
-            sequence.OnComplete(HandleSpinTweenCompleted);
-
-            _spinTween = sequence;
+            _spinTween = _rotator
+                .DOLocalRotate(new Vector3(0f, 0f, end), _spinDuration, RotateMode.FastBeyond360)
+                .SetEase(_spinEase)
+                .SetLink(gameObject)
+                .OnComplete(HandleSpinTweenCompleted);
         }
 
         private void HandleSpinTweenCompleted()
