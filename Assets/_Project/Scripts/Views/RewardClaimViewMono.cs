@@ -6,7 +6,7 @@ using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class RewardClaimView : MonoBehaviour, IRewardClaimView
+    public sealed class RewardClaimViewMono : MonoBehaviour, IRewardClaimView
     {
         #region Serialized Fields
 

@@ -6,7 +6,7 @@ using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class CashOutPopupView : PopupView, ICashOutPopupView
+    public sealed class CashOutPopupViewMono : PopupViewMono, ICashOutPopupView
     {
         #region Constants
 
@@ -18,7 +18,7 @@ namespace WheelGame.Views
         #region Serialized Fields
 
         [SerializeField] private RectTransform _cellContainer;
-        [SerializeField] private RewardCellView _cellPrefab;
+        [SerializeField] private RewardCellViewMono _cellPrefab;
         [SerializeField] private GameObject _emptyState;
         [SerializeField] private Button _continueButton;
 

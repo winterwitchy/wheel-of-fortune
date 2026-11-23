@@ -6,7 +6,7 @@ using WheelGame.Data;
 
 namespace WheelGame.Views
 {
-    public sealed class WheelEffectsView : MonoBehaviour, IWheelEffectsView
+    public sealed class WheelEffectsViewMono : MonoBehaviour, IWheelEffectsView
     {
         #region Serialized Fields
 

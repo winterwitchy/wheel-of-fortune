@@ -9,17 +9,17 @@ namespace WheelGame.Views
     {
         #region Fields
 
-        private readonly RewardCellView _prefab;
+        private readonly RewardCellViewMono _prefab;
         private readonly RectTransform _container;
         private readonly string _nameFormat;
-        private readonly List<RewardCellView> _cells = new List<RewardCellView>();
-        private readonly Dictionary<RewardItem, RewardCellView> _activeCells = new Dictionary<RewardItem, RewardCellView>();
+        private readonly List<RewardCellViewMono> _cells = new List<RewardCellViewMono>();
+        private readonly Dictionary<RewardItem, RewardCellViewMono> _activeCells = new Dictionary<RewardItem, RewardCellViewMono>();
 
         #endregion
 
         #region Constructors
 
-        public RewardCellPool(RewardCellView prefab, RectTransform container, string nameFormat)
+        public RewardCellPool(RewardCellViewMono prefab, RectTransform container, string nameFormat)
         {
             _prefab = prefab;
             _container = container;
@@ -30,12 +30,12 @@ namespace WheelGame.Views
 
         #region Public Methods
 
-        public bool TryGet(RewardItem reward, out RewardCellView cell)
+        public bool TryGet(RewardItem reward, out RewardCellViewMono cell)
         {
             return _activeCells.TryGetValue(reward, out cell);
         }
 
-        public RewardCellView GetOrCreate(RewardItem reward)
+        public RewardCellViewMono GetOrCreate(RewardItem reward)
         {
             if (_activeCells.TryGetValue(reward, out var cell))
             {
@@ -63,7 +63,7 @@ namespace WheelGame.Views
 
         #region Private Methods
 
-        private RewardCellView TakeInactiveCell()
+        private RewardCellViewMono TakeInactiveCell()
         {
             foreach (var cell in _cells)
             {

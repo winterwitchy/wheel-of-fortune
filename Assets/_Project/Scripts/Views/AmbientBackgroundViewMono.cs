@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace WheelGame.Views
 {
-    public sealed class AmbientBackgroundView : MonoBehaviour
+    public sealed class AmbientBackgroundViewMono : MonoBehaviour
     {
         #region Serialized Fields
 

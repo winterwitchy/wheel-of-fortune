@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace WheelGame.Views
 {
-    public sealed class RewardCellView : MonoBehaviour
+    public sealed class RewardCellViewMono : MonoBehaviour
     {
         #region Serialized Fields
 

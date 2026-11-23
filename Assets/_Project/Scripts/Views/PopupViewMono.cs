@@ -4,7 +4,7 @@ using UnityEngine;
 namespace WheelGame.Views
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public abstract class PopupView : MonoBehaviour
+    public abstract class PopupViewMono : MonoBehaviour
     {
         #region Serialized Fields
 

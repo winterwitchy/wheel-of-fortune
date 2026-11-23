@@ -10,7 +10,7 @@ using WheelGame.Views;
 
 namespace WheelGame.Infrastructure
 {
-    public sealed class GameBootstrapper : MonoBehaviour
+    public sealed class GameBootstrapperMono : MonoBehaviour
     {
         #region Constants
 
@@ -23,14 +23,14 @@ namespace WheelGame.Infrastructure
         #region Serialized Fields
 
         [SerializeField] private GameConfig _config;
-        [SerializeField] private GoldView _goldView;
-        [SerializeField] private ZoneProgressBarView _zoneProgressBarView;
-        [SerializeField] private WheelView _wheelView;
-        [SerializeField] private WheelEffectsView _wheelEffectsView;
-        [SerializeField] private RewardsPanelView _rewardsPanelView;
-        [SerializeField] private RewardClaimView _rewardClaimView;
-        [SerializeField] private BombPopupView _bombPopupView;
-        [SerializeField] private CashOutPopupView _cashOutPopupView;
+        [SerializeField] private GoldViewMono _goldView;
+        [SerializeField] private ZoneProgressBarViewMono _zoneProgressBarView;
+        [SerializeField] private WheelViewMono _wheelView;
+        [SerializeField] private WheelEffectsViewMono _wheelEffectsView;
+        [SerializeField] private RewardsPanelViewMono _rewardsPanelView;
+        [SerializeField] private RewardClaimViewMono _rewardClaimView;
+        [SerializeField] private BombPopupViewMono _bombPopupView;
+        [SerializeField] private CashOutPopupViewMono _cashOutPopupView;
 
         #endregion
 

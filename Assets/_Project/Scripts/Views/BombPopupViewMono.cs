@@ -5,7 +5,7 @@ using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class BombPopupView : PopupView, IBombPopupView
+    public sealed class BombPopupViewMono : PopupViewMono, IBombPopupView
     {
         #region Constants
 

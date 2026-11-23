@@ -9,7 +9,7 @@ using WheelGame.Data;
 
 namespace WheelGame.Views
 {
-    public sealed class WheelView : MonoBehaviour, IWheelView
+    public sealed class WheelViewMono : MonoBehaviour, IWheelView
     {
         #region Constants
 
@@ -23,7 +23,7 @@ namespace WheelGame.Views
         [Header("References")]
         [SerializeField] private RectTransform _rotator;
         [SerializeField] private RectTransform _sliceContainer;
-        [SerializeField] private WheelSliceView _slicePrefab;
+        [SerializeField] private WheelSliceViewMono _slicePrefab;
         [SerializeField] private Image _baseImage;
         [SerializeField] private Image _indicatorImage;
         [SerializeField] private TMP_Text _titleText;
@@ -42,7 +42,7 @@ namespace WheelGame.Views
 
         #region Fields
 
-        private readonly List<WheelSliceView> _slices = new List<WheelSliceView>();
+        private readonly List<WheelSliceViewMono> _slices = new List<WheelSliceViewMono>();
         private Tween _spinTween;
         private bool _isSpinPending;
         private IRewardIconProvider _icons;

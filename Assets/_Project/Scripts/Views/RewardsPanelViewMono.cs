@@ -5,7 +5,7 @@ using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class RewardsPanelView : MonoBehaviour, IRewardsPanelView
+    public sealed class RewardsPanelViewMono : MonoBehaviour, IRewardsPanelView
     {
         #region Constants
 
@@ -18,7 +18,7 @@ namespace WheelGame.Views
 
         [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private RectTransform _content;
-        [SerializeField] private RewardCellView _cellPrefab;
+        [SerializeField] private RewardCellViewMono _cellPrefab;
         [SerializeField] private Button _leaveButton;
 
         #endregion

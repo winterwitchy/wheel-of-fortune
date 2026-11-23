@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace WheelGame.Views
 {
-    public sealed class GoldView : MonoBehaviour, ICurrencyView
+    public sealed class GoldViewMono : MonoBehaviour, ICurrencyView
     {
         #region Serialized Fields
 

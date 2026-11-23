@@ -9,7 +9,7 @@ using WheelGame.Data;
 
 namespace WheelGame.Views
 {
-    public sealed class ZoneProgressBarView : MonoBehaviour, IZoneProgressView
+    public sealed class ZoneProgressBarViewMono : MonoBehaviour, IZoneProgressView
     {
         #region Nested Types
 
@@ -42,7 +42,7 @@ namespace WheelGame.Views
 
         [Header("Strip")]
         [SerializeField] private RectTransform _strip;
-        [SerializeField] private ZoneCellView _cellPrefab;
+        [SerializeField] private ZoneCellViewMono _cellPrefab;
         [SerializeField, Min(3)] private int _visibleCellCount = 11;
         [SerializeField, Min(1f)] private float _cellSpacing = 76f;
         [SerializeField, Range(0f, 1f)] private float _passedAlpha = 0.35f;
@@ -64,7 +64,7 @@ namespace WheelGame.Views
 
         #region Private Fields
 
-        private readonly List<ZoneCellView> _cells = new List<ZoneCellView>();
+        private readonly List<ZoneCellViewMono> _cells = new List<ZoneCellViewMono>();
         private Func<int, ZoneVisuals> _visualsLookup;
         private Func<string, int> _nextZoneLookup;
         private Tween _slideTween;

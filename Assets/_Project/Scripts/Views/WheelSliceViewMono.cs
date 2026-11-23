@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace WheelGame.Views
 {
-    public sealed class WheelSliceView : MonoBehaviour
+    public sealed class WheelSliceViewMono : MonoBehaviour
     {
         #region Serialized Fields
 
