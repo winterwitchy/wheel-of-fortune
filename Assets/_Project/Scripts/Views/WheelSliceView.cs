@@ -17,7 +17,7 @@ namespace WheelGame.Views
         public void ShowReward(Sprite icon, int amount)
         {
             _icon.sprite = icon;
-            _amountText.text = AmountFormatter.Format(amount);
+            _amountText.text = AmountFormatter.FormatCount(amount);
             _amountText.gameObject.SetActive(true);
         }
 

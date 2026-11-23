@@ -22,7 +22,7 @@ namespace WheelGame.Views
         {
             _icon.sprite = icon;
             _icon.color = Color.white;
-            _amountText.text = AmountFormatter.Format(amount);
+            _amountText.text = AmountFormatter.FormatCount(amount);
         }
 
         public void ShowPlaceholder(Sprite icon)

@@ -1,4 +1,3 @@
-using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +23,7 @@ namespace WheelGame.Views
 
         public void Show(int reviveCost, bool canAffordRevive)
         {
-            _reviveCostText.text = reviveCost.ToString(CultureInfo.InvariantCulture);
+            _reviveCostText.text = AmountFormatter.FormatCompact(reviveCost);
             _reviveButton.interactable = canAffordRevive;
             Open();
         }

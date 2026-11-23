@@ -18,6 +18,7 @@ namespace WheelGame.Views
         [Header("Idle")]
         [SerializeField, Min(0.1f)] private float _pulseDuration = 1.6f;
         [SerializeField, Range(0f, 1f)] private float _pulseAmount = 0.12f;
+        [SerializeField, Min(1f)] private float _idleRaysSecondsPerTurn = 40f;
 
         [Header("Zone Change")]
         [SerializeField, Min(0f)] private float _styleTransition = 0.6f;
@@ -26,6 +27,8 @@ namespace WheelGame.Views
         [SerializeField, Min(0.1f)] private float _bombDuration = 0.5f;
         [SerializeField, Min(0f)] private float _shakeStrength = 30f;
         [SerializeField, Range(0f, 1f)] private float _flashAlpha = 0.5f;
+        [SerializeField, Range(0f, 1f)] private float _flashFadeRatio = 0.25f;
+        [SerializeField, Range(0f, 1f)] private float _glowFlashRatio = 0.5f;
         [SerializeField] private Color _bombGlowColor = Color.red;
 
         private Tween _pulseTween;
@@ -59,8 +62,8 @@ namespace WheelGame.Views
 
             _bombTween = DOTween.Sequence()
                 .Join(_shakeTarget.DOShakeAnchorPos(_bombDuration, _shakeStrength))
-                .Join(_bombFlash.DOFade(_flashAlpha, _bombDuration * 0.25f).SetLoops(2, LoopType.Yoyo))
-                .Join(_glow.DOColor(_bombGlowColor, _bombDuration * 0.5f).SetLoops(2, LoopType.Yoyo))
+                .Join(_bombFlash.DOFade(_flashAlpha, _bombDuration * _flashFadeRatio).SetLoops(2, LoopType.Yoyo))
+                .Join(_glow.DOColor(_bombGlowColor, _bombDuration * _glowFlashRatio).SetLoops(2, LoopType.Yoyo))
                 .SetLink(gameObject)
                 .OnComplete(HandleBombTweenFinished)
                 .OnKill(HandleBombTweenFinished);
@@ -87,7 +90,7 @@ namespace WheelGame.Views
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetLink(gameObject);
 
-            StartRaysRotation(40f);
+            StartRaysRotation(_idleRaysSecondsPerTurn);
         }
 
         private void OnDisable()

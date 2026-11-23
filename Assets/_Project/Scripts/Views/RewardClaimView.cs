@@ -44,7 +44,7 @@ namespace WheelGame.Views
 
             _isClaimPending = true;
             _icon.sprite = icon;
-            _amountText.text = AmountFormatter.Format(amount);
+            _amountText.text = AmountFormatter.FormatCount(amount);
             _flyer.position = fromWorldPosition;
             _flyer.localScale = Vector3.one;
             _flyer.gameObject.SetActive(true);

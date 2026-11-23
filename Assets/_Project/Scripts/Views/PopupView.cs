@@ -9,6 +9,7 @@ namespace WheelGame.Views
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _card;
         [SerializeField, Min(0f)] private float _duration = 0.25f;
+        [SerializeField, Range(0f, 1f)] private float _openScale = 0.85f;
 
         public void Close()
         {
@@ -33,7 +34,7 @@ namespace WheelGame.Views
             DOTween.Kill(this);
 
             _canvasGroup.alpha = 0f;
-            _card.localScale = Vector3.one * 0.85f;
+            _card.localScale = Vector3.one * _openScale;
             SetInteractive(true);
 
             DOTween.Sequence()

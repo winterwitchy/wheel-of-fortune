@@ -1,4 +1,3 @@
-using System.Globalization;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -11,6 +10,8 @@ namespace WheelGame.Views
         [SerializeField] private Image _iconImage;
         [SerializeField] private TMP_Text _amountText;
         [SerializeField] private RectTransform _punchTarget;
+        [SerializeField, Min(0f)] private float _punchScale = 0.2f;
+        [SerializeField, Min(0f)] private float _punchDuration = 0.3f;
 
         private int _shownGold = -1;
 
@@ -23,13 +24,13 @@ namespace WheelGame.Views
         {
             var changed = _shownGold >= 0 && amount != _shownGold;
             _shownGold = amount;
-            _amountText.text = amount.ToString(CultureInfo.InvariantCulture);
+            _amountText.text = AmountFormatter.FormatCompact(amount);
 
             if (!changed)
                 return;
 
             _punchTarget.DOKill(true);
-            _punchTarget.DOPunchScale(Vector3.one * 0.2f, 0.3f).SetLink(gameObject);
+            _punchTarget.DOPunchScale(Vector3.one * _punchScale, _punchDuration).SetLink(gameObject);
         }
     }
 }

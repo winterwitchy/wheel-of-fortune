@@ -13,6 +13,8 @@ namespace WheelGame.Views
         [SerializeField, Min(0.1f)] private float _maxDuration = 11f;
         [SerializeField, Range(0f, 1f)] private float _scaleVariation = 0.2f;
         [SerializeField, Range(0f, 1f)] private float _alphaVariation = 0.4f;
+        [SerializeField, Min(0.1f)] private float _scaleDurationRatio = 0.8f;
+        [SerializeField, Min(0.1f)] private float _fadeDurationRatio = 1.3f;
 
         private readonly List<Vector2> _basePositions = new List<Vector2>();
         private readonly List<float> _baseAlphas = new List<float>();
@@ -60,13 +62,13 @@ namespace WheelGame.Views
                 .SetLink(gameObject);
 
             blobTransform
-                .DOScale(1f + _scaleVariation, duration * 0.8f)
+                .DOScale(1f + _scaleVariation, duration * _scaleDurationRatio)
                 .SetEase(Ease.InOutSine)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetLink(gameObject);
 
             blob
-                .DOFade(baseAlpha * (1f - _alphaVariation), duration * 1.3f)
+                .DOFade(baseAlpha * (1f - _alphaVariation), duration * _fadeDurationRatio)
                 .SetEase(Ease.InOutSine)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetLink(gameObject);
