@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 21487998}
   - component: {fileID: 21487997}
   - component: {fileID: 21487996}
+  - component: {fileID: 21488000}
   m_Layer: 5
   m_Name: ui_canvas_main
   m_TagString: Untagged
@@ -232,6 +233,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &21488000
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21487995}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &139619129
 GameObject:
   m_ObjectHideFlags: 0
@@ -638,9 +651,6 @@ MonoBehaviour:
   _spinButton: {fileID: 1106272459}
   _sliceRadius: 205
   _angleOffset: 0
-  _spinDuration: 3.5
-  _fullTurns: 5
-  _spinEase: 12
   _bombSprite: {fileID: 21300000, guid: fb8157bc4943f5049809664fe6c67bb6, type: 3}
 --- !u!114 &313927610
 MonoBehaviour:
@@ -661,10 +671,13 @@ MonoBehaviour:
   _bombFlash: {fileID: 439949129}
   _pulseDuration: 1.6
   _pulseAmount: 0.12
+  _idleRaysSecondsPerTurn: 40
   _styleTransition: 0.6
   _bombDuration: 0.5
   _shakeStrength: 30
   _flashAlpha: 0.5
+  _flashFadeRatio: 0.25
+  _glowFlashRatio: 0.5
   _bombGlowColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &357681964
 GameObject:
@@ -807,7 +820,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -978,7 +991,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -2225,7 +2238,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -2534,6 +2547,7 @@ MonoBehaviour:
   _canvasGroup: {fileID: 606505861}
   _card: {fileID: 1647374909}
   _duration: 0.25
+  _openScale: 0.85
   _cellContainer: {fileID: 988627542}
   _cellPrefab: {fileID: 2400394581269078551, guid: 2e09b06115ef8d3428d825275f5fc6a7, type: 3}
   _emptyState: {fileID: 510538388}
@@ -2604,6 +2618,8 @@ MonoBehaviour:
   _iconImage: {fileID: 1432040581}
   _amountText: {fileID: 1657093690}
   _punchTarget: {fileID: 1652476289}
+  _punchScale: 0.2
+  _punchDuration: 0.3
 --- !u!1 &657947469
 GameObject:
   m_ObjectHideFlags: 0
@@ -2788,6 +2804,7 @@ MonoBehaviour:
   _canvasGroup: {fileID: 753408350}
   _card: {fileID: 1932297496}
   _duration: 0.25
+  _openScale: 0.85
   _giveUpButton: {fileID: 1712137764}
   _reviveButton: {fileID: 584651273}
   _reviveCostText: {fileID: 1338291320}
@@ -4224,6 +4241,8 @@ MonoBehaviour:
   _maxDuration: 11
   _scaleVariation: 0.2
   _alphaVariation: 0.4
+  _scaleDurationRatio: 0.8
+  _fadeDurationRatio: 1.3
 --- !u!223 &1350148096
 Canvas:
   m_ObjectHideFlags: 0
@@ -4326,7 +4345,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -4578,7 +4597,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1432040579}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -5876,6 +5895,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config: {fileID: 11400000, guid: a0a80b5212d60f84c97efd84ca51d8ae, type: 2}
+  _rootCanvasGroup: {fileID: 21488000}
+  _revealDuration: 0.3
   _goldView: {fileID: 651586682}
   _zoneProgressBarView: {fileID: 1670043759}
   _wheelView: {fileID: 313927609}
@@ -6525,7 +6546,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2

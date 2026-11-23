@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using DG.Tweening;
 using UnityEngine;
 using WheelGame.Core;
 using WheelGame.Core.Events;
@@ -23,6 +24,8 @@ namespace WheelGame.Infrastructure
         #region Serialized Fields
 
         [SerializeField] private GameConfig _config;
+        [SerializeField] private CanvasGroup _rootCanvasGroup;
+        [SerializeField, Min(0f)] private float _revealDuration = 0.3f;
         [SerializeField] private GoldViewMono _goldView;
         [SerializeField] private ZoneProgressBarViewMono _zoneProgressBarView;
         [SerializeField] private WheelViewMono _wheelView;
@@ -46,6 +49,20 @@ namespace WheelGame.Infrastructure
 
         private IEnumerator Start()
         {
+            SetInterfaceVisible(false);
+
+            var configErrors = _config.GetValidationErrors();
+
+            if (configErrors.Count > 0)
+            {
+                foreach (var error in configErrors)
+                {
+                    Debug.LogError($"{_config.name}: {error}", _config);
+                }
+
+                yield break;
+            }
+
             Application.targetFrameRate = _config.TargetFrameRate;
 
             var bus = new EventBus();
@@ -89,6 +106,7 @@ namespace WheelGame.Infrastructure
             }
 
             session.StartRun();
+            SetInterfaceVisible(true);
         }
 
         private void OnDestroy()
@@ -114,6 +132,20 @@ namespace WheelGame.Infrastructure
         #endregion
 
         #region Private Methods
+
+        private void SetInterfaceVisible(bool visible)
+        {
+            _rootCanvasGroup.interactable = visible;
+            _rootCanvasGroup.blocksRaycasts = visible;
+
+            if (!visible)
+            {
+                _rootCanvasGroup.alpha = 0f;
+                return;
+            }
+
+            _rootCanvasGroup.DOFade(1f, _revealDuration).SetLink(gameObject);
+        }
 
         private static IProgressStore CreateProgressStore()
         {

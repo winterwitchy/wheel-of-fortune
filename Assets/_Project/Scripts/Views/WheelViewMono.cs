@@ -33,8 +33,6 @@ namespace WheelGame.Views
         [SerializeField, Min(0f)] private float _sliceRadius = 205f;
         [SerializeField] private float _angleOffset;
 
-        [Header("Spin")]
-
         [Header("Visuals")]
         [SerializeField] private Sprite _bombSprite;
 
