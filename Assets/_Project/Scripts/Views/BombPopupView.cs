@@ -8,8 +8,8 @@ namespace WheelGame.Views
 {
     public sealed class BombPopupView : PopupView
     {
-        private const string GiveUpButtonName = "ui_button_give_up";
-        private const string ReviveButtonName = "ui_button_revive";
+        private const string GiveUpButtonName = "ui_button_popup_bomb_give_up";
+        private const string ReviveButtonName = "ui_button_popup_bomb_revive";
 
         [SerializeField] private Button _giveUpButton;
         [SerializeField] private Button _reviveButton;

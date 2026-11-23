@@ -140,7 +140,7 @@ namespace WheelGame.Views
             for (var i = 0; i < WheelLayout.SliceCount; i++)
             {
                 var slice = Instantiate(_slicePrefab, _sliceContainer);
-                slice.name = $"ui_wheel_slice_{i}";
+                slice.name = $"ui_rect_wheel_slice_{i}";
 
                 var angle = _angleOffset - i * SliceAngle;
                 var radians = angle * Mathf.Deg2Rad;

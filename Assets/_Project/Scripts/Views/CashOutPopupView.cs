@@ -8,7 +8,7 @@ namespace WheelGame.Views
 {
     public sealed class CashOutPopupView : PopupView
     {
-        private const string ContinueButtonName = "ui_button_continue";
+        private const string ContinueButtonName = "ui_button_popup_cashout_continue";
         private const string CELL_NAME_FORMAT = "ui_rect_popup_cashout_cell_{0}";
 
         [SerializeField] private RectTransform _cellContainer;

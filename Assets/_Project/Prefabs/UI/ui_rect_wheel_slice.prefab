@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 8694169702324269161}
   - component: {fileID: 88377304217784344}
   m_Layer: 5
-  m_Name: ui_wheel_slice
+  m_Name: ui_rect_wheel_slice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
