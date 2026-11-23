@@ -9,28 +9,29 @@ namespace WheelGame.Views
     public sealed class CashOutPopupView : PopupView
     {
         private const string ContinueButtonName = "ui_button_continue";
+        private const string CELL_NAME_FORMAT = "ui_rect_popup_cashout_cell_{0}";
 
         [SerializeField] private RectTransform _cellContainer;
         [SerializeField] private RewardCellView _cellPrefab;
         [SerializeField] private GameObject _emptyState;
         [SerializeField] private Button _continueButton;
 
-        private readonly List<RewardCellView> _cells = new List<RewardCellView>();
+        private RewardCellPool _cells;
 
         public event Action ContinueClicked;
 
         public void Show(IReadOnlyDictionary<RewardItemData, int> rewards)
         {
-            foreach (var cell in _cells)
-                Destroy(cell.gameObject);
+            if (_cells == null)
+            {
+                _cells = new RewardCellPool(_cellPrefab, _cellContainer, CELL_NAME_FORMAT);
+            }
 
-            _cells.Clear();
+            _cells.ReleaseAll();
 
             foreach (var pair in rewards)
             {
-                var cell = Instantiate(_cellPrefab, _cellContainer);
-                cell.Show(pair.Key.Icon, pair.Value);
-                _cells.Add(cell);
+                _cells.GetOrCreate(pair.Key).Show(pair.Key.Icon, pair.Value);
             }
 
             _emptyState.SetActive(rewards.Count == 0);

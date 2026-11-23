@@ -42,15 +42,55 @@ namespace WheelGame.Tests.EditMode
         }
 
         [Test]
-        public void CompleteSpin_OnReward_CollectsRewardAndAdvancesZone()
+        public void CompleteSpin_OnReward_CollectsRewardAndWaitsForTheClaim()
         {
             var session = CreateSession(RewardIndex);
             session.StartRun();
+            session.Spin();
 
-            SpinAndComplete(session);
+            session.CompleteSpin();
 
-            Assert.AreEqual(2, session.CurrentZone);
+            Assert.AreEqual(SessionState.CollectingReward, session.State);
+            Assert.AreEqual(1, session.CurrentZone);
             Assert.AreEqual(RewardAmount, session.CollectedRewards[_reward]);
+            Assert.IsFalse(session.CanSpin);
+            Assert.IsFalse(session.CanLeave);
+        }
+
+        [Test]
+        public void FinishCollecting_AdvancesToTheNextZone()
+        {
+            var session = CreateSession(RewardIndex);
+            session.StartRun();
+            session.Spin();
+            session.CompleteSpin();
+
+            session.FinishCollecting();
+
+            Assert.AreEqual(SessionState.ReadyToSpin, session.State);
+            Assert.AreEqual(2, session.CurrentZone);
+        }
+
+        [Test]
+        public void FinishCollecting_WhenNotCollecting_Throws()
+        {
+            var session = CreateSession();
+            session.StartRun();
+
+            Assert.Throws<InvalidOperationException>(() => session.FinishCollecting());
+        }
+
+        [Test]
+        public void StartRun_RaisesRunStartedBeforeTheFirstZone()
+        {
+            var session = CreateSession();
+            var zoneWhenRunStarted = -1;
+            session.RunStarted += () => zoneWhenRunStarted = session.CurrentZone;
+
+            session.StartRun();
+
+            Assert.AreEqual(0, zoneWhenRunStarted);
+            Assert.AreEqual(1, session.CurrentZone);
         }
 
         [Test]
@@ -173,6 +213,9 @@ namespace WheelGame.Tests.EditMode
             Assert.IsFalse(session.CanLeave);
 
             session.CompleteSpin();
+            Assert.IsFalse(session.CanLeave);
+
+            session.FinishCollecting();
             Assert.IsTrue(session.CanLeave);
             Assert.AreEqual(3, session.CurrentZone);
         }
@@ -282,6 +325,11 @@ namespace WheelGame.Tests.EditMode
         {
             session.Spin();
             session.CompleteSpin();
+
+            if (session.State == SessionState.CollectingReward)
+            {
+                session.FinishCollecting();
+            }
         }
     }
 }

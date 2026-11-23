@@ -5,6 +5,7 @@ namespace WheelGame.Core
         NotStarted,
         ReadyToSpin,
         Spinning,
+        CollectingReward,
         BombHit,
         CashedOut
     }

@@ -9,6 +9,11 @@ namespace WheelGame.Views
         [SerializeField] private Image _icon;
         [SerializeField] private TMP_Text _amountText;
 
+        public Vector3 IconPosition
+        {
+            get { return _icon.rectTransform.position; }
+        }
+
         public void ShowReward(Sprite icon, int amount)
         {
             _icon.sprite = icon;

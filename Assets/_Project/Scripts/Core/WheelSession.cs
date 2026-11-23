@@ -26,6 +26,7 @@ namespace WheelGame.Core
         }
 
         public event Action StateChanged;
+        public event Action RunStarted;
         public event Action<int, ZoneType, IReadOnlyList<WheelSliceEntry>> ZoneStarted;
         public event Action<SpinResult> SpinStarted;
         public event Action<WheelSliceEntry> RewardCollected;
@@ -86,6 +87,12 @@ namespace WheelGame.Core
         {
             _collectedRewards.Clear();
             _revivesUsed = 0;
+
+            if (RunStarted != null)
+            {
+                RunStarted.Invoke();
+            }
+
             EnterZone(1);
         }
 
@@ -117,7 +124,21 @@ namespace WheelGame.Core
             }
 
             AddReward(slice);
-            RewardCollected?.Invoke(slice);
+            SetState(SessionState.CollectingReward);
+
+            if (RewardCollected != null)
+            {
+                RewardCollected.Invoke(slice);
+            }
+        }
+
+        public void FinishCollecting()
+        {
+            if (State != SessionState.CollectingReward)
+            {
+                throw new InvalidOperationException($"Cannot finish collecting while {State}.");
+            }
+
             EnterZone(CurrentZone + 1);
         }
 

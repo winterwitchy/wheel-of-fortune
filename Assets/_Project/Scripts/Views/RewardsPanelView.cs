@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelGame.Data;
@@ -8,30 +7,60 @@ namespace WheelGame.Views
 {
     public sealed class RewardsPanelView : MonoBehaviour
     {
-        private const string LeaveButtonName = "ui_button_leave";
+        #region Constants
 
-        [SerializeField] private RectTransform _cellContainer;
+        private const string LEAVE_BUTTON_NAME = "ui_button_rewards_leave";
+        private const string CELL_NAME_FORMAT = "ui_rect_rewards_row_{0}";
+
+        #endregion
+
+        #region Serialized Fields
+
+        [SerializeField] private ScrollRect _scrollRect;
+        [SerializeField] private RectTransform _content;
         [SerializeField] private RewardCellView _cellPrefab;
         [SerializeField] private Button _leaveButton;
 
-        private readonly Dictionary<RewardItemData, RewardCellView> _cells = new Dictionary<RewardItemData, RewardCellView>();
+        #endregion
+
+        #region Private Fields
+
+        private RewardCellPool _cells;
+
+        #endregion
 
         public event Action LeaveClicked;
 
-        public void Show(IReadOnlyDictionary<RewardItemData, int> rewards)
+        #region Public Methods
+
+        public void Clear()
         {
-            RemoveMissingCells(rewards);
+            GetCells().ReleaseAll();
+            _content.anchoredPosition = new Vector2(_content.anchoredPosition.x, 0f);
+        }
 
-            foreach (var pair in rewards)
+        public RectTransform PrepareClaimTarget(RewardItemData reward, int shownAmount)
+        {
+            var cell = GetCells().GetOrCreate(reward);
+
+            if (shownAmount > 0)
             {
-                if (!_cells.TryGetValue(pair.Key, out var cell))
-                {
-                    cell = Instantiate(_cellPrefab, _cellContainer);
-                    _cells.Add(pair.Key, cell);
-                }
-
-                cell.Show(pair.Key.Icon, pair.Value);
+                cell.Show(reward.Icon, shownAmount);
             }
+            else
+            {
+                cell.ShowPlaceholder(reward.Icon);
+            }
+
+            Reveal((RectTransform)cell.transform);
+            return cell.IconTransform;
+        }
+
+        public void ShowClaimedAmount(RewardItemData reward, int amount)
+        {
+            var cell = GetCells().GetOrCreate(reward);
+            cell.Show(reward.Icon, amount);
+            cell.PlayPunch();
         }
 
         public void SetLeaveInteractable(bool interactable)
@@ -39,22 +68,9 @@ namespace WheelGame.Views
             _leaveButton.interactable = interactable;
         }
 
-        private void RemoveMissingCells(IReadOnlyDictionary<RewardItemData, int> rewards)
-        {
-            var missing = new List<RewardItemData>();
+        #endregion
 
-            foreach (var reward in _cells.Keys)
-            {
-                if (!rewards.ContainsKey(reward))
-                    missing.Add(reward);
-            }
-
-            foreach (var reward in missing)
-            {
-                Destroy(_cells[reward].gameObject);
-                _cells.Remove(reward);
-            }
-        }
+        #region Unity Callbacks
 
         private void OnEnable()
         {
@@ -66,15 +82,58 @@ namespace WheelGame.Views
             _leaveButton.onClick.RemoveListener(HandleLeaveClicked);
         }
 
+        #endregion
+
+        #region Private Methods
+
+        private RewardCellPool GetCells()
+        {
+            if (_cells == null)
+            {
+                _cells = new RewardCellPool(_cellPrefab, _content, CELL_NAME_FORMAT);
+            }
+
+            return _cells;
+        }
+
+        private void Reveal(RectTransform cell)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_content);
+            _scrollRect.StopMovement();
+
+            var viewportHeight = _scrollRect.viewport.rect.height;
+            var cellTop = -cell.anchoredPosition.y - cell.rect.height * (1f - cell.pivot.y);
+            var cellBottom = cellTop + cell.rect.height;
+            var scroll = _content.anchoredPosition.y;
+
+            if (cellTop < scroll)
+            {
+                scroll = cellTop;
+            }
+
+            if (cellBottom > scroll + viewportHeight)
+            {
+                scroll = cellBottom - viewportHeight;
+            }
+
+            var maxScroll = Mathf.Max(0f, _content.rect.height - viewportHeight);
+            _content.anchoredPosition = new Vector2(_content.anchoredPosition.x, Mathf.Clamp(scroll, 0f, maxScroll));
+        }
+
         private void HandleLeaveClicked()
         {
-            LeaveClicked?.Invoke();
+            if (LeaveClicked != null)
+            {
+                LeaveClicked.Invoke();
+            }
         }
+
+        #endregion
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            _leaveButton = ButtonLookup.FindInChildren(this, LeaveButtonName);
+            _leaveButton = ButtonLookup.FindInChildren(this, LEAVE_BUTTON_NAME);
         }
 #endif
     }

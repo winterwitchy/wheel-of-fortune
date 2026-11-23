@@ -17,13 +17,18 @@ namespace WheelGame.Presentation
         private readonly WheelView _wheelView;
         private readonly WheelEffectsView _wheelEffectsView;
         private readonly RewardsPanelView _rewardsPanelView;
+        private readonly RewardClaimView _rewardClaimView;
         private readonly BombPopupView _bombPopupView;
         private readonly CashOutPopupView _cashOutPopupView;
+
+        private int _spinningSliceIndex;
+        private RewardItemData _claimedReward;
+        private int _claimedTotal;
 
         public GamePresenter(
             WheelSession session, IWallet wallet, IRewardVault vault, string goldId,
             GoldView goldView, ZoneProgressBarView zoneProgressBarView, WheelView wheelView, WheelEffectsView wheelEffectsView,
-            RewardsPanelView rewardsPanelView, BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
+            RewardsPanelView rewardsPanelView, RewardClaimView rewardClaimView, BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
             _session = session;
             _wallet = wallet;
@@ -34,6 +39,7 @@ namespace WheelGame.Presentation
             _wheelView = wheelView;
             _wheelEffectsView = wheelEffectsView;
             _rewardsPanelView = rewardsPanelView;
+            _rewardClaimView = rewardClaimView;
             _bombPopupView = bombPopupView;
             _cashOutPopupView = cashOutPopupView;
         }
@@ -41,6 +47,8 @@ namespace WheelGame.Presentation
         public void Initialize()
         {
             _session.StateChanged += HandleStateChanged;
+            _session.RunStarted += HandleRunStarted;
+            _session.RewardCollected += HandleRewardCollected;
             _session.ZoneStarted += HandleZoneStarted;
             _session.SpinStarted += HandleSpinStarted;
             _session.BombHit += HandleBombHit;
@@ -60,6 +68,8 @@ namespace WheelGame.Presentation
         public void Dispose()
         {
             _session.StateChanged -= HandleStateChanged;
+            _session.RunStarted -= HandleRunStarted;
+            _session.RewardCollected -= HandleRewardCollected;
             _session.ZoneStarted -= HandleZoneStarted;
             _session.SpinStarted -= HandleSpinStarted;
             _session.BombHit -= HandleBombHit;
@@ -88,7 +98,30 @@ namespace WheelGame.Presentation
 
         private void HandleSpinStarted(SpinResult result)
         {
+            _spinningSliceIndex = result.SliceIndex;
             _wheelView.PlaySpin(result.SliceIndex, _session.CompleteSpin);
+        }
+
+        private void HandleRunStarted()
+        {
+            _rewardsPanelView.Clear();
+        }
+
+        private void HandleRewardCollected(WheelSliceEntry slice)
+        {
+            var total = _session.CollectedRewards[slice.Reward];
+            var target = _rewardsPanelView.PrepareClaimTarget(slice.Reward, total - slice.Amount);
+
+            _claimedReward = slice.Reward;
+            _claimedTotal = total;
+            _rewardClaimView.Play(slice.Reward.Icon, slice.Amount, _wheelView.GetSliceIconPosition(_spinningSliceIndex), target, HandleClaimArrived);
+        }
+
+        private void HandleClaimArrived()
+        {
+            _rewardsPanelView.ShowClaimedAmount(_claimedReward, _claimedTotal);
+            _claimedReward = null;
+            _session.FinishCollecting();
         }
 
         private void HandleZoneStarted(int zone, ZoneType zoneType, IReadOnlyList<WheelSliceEntry> wheel)
@@ -96,7 +129,6 @@ namespace WheelGame.Presentation
             _zoneProgressBarView.Show(zone, _session.GetNextZoneOfType(ZoneType.Safe), _session.GetNextZoneOfType(ZoneType.Super));
             _wheelView.Show(zoneType, wheel);
             _wheelEffectsView.SetZoneType(zoneType);
-            _rewardsPanelView.Show(_session.CollectedRewards);
         }
 
         private void HandleStateChanged()

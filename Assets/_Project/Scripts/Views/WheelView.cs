@@ -75,6 +75,11 @@ namespace WheelGame.Views
             }
         }
 
+        public Vector3 GetSliceIconPosition(int sliceIndex)
+        {
+            return _slices[sliceIndex].IconPosition;
+        }
+
         public void SetSpinInteractable(bool interactable)
         {
             _spinButton.interactable = interactable;
