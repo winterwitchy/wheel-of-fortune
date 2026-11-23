@@ -1,45 +1,92 @@
 using System;
+using System.Collections.Generic;
 
 namespace WheelGame.Core
 {
     public sealed class ZoneRules
     {
-        private readonly int _safeInterval;
-        private readonly int _superInterval;
+        private readonly List<ZoneKind> _kinds;
 
-        public ZoneRules(int safeInterval, int superInterval)
+        public ZoneRules(IReadOnlyList<ZoneKind> kinds)
         {
-            if (safeInterval <= 0)
-                throw new ArgumentOutOfRangeException(nameof(safeInterval));
+            if (kinds == null || kinds.Count == 0)
+            {
+                throw new ArgumentException("At least one zone kind is required.", nameof(kinds));
+            }
 
-            if (superInterval <= 0)
-                throw new ArgumentOutOfRangeException(nameof(superInterval));
+            _kinds = new List<ZoneKind>(kinds);
+            _kinds.Sort(CompareByPriorityDescending);
 
-            _safeInterval = safeInterval;
-            _superInterval = superInterval;
+            if (!HasDefaultKind())
+            {
+                throw new ArgumentException("One zone kind must have an interval of 1 so every zone has a kind.", nameof(kinds));
+            }
         }
 
-        public ZoneType GetZoneType(int zone)
+        public IReadOnlyList<ZoneKind> Kinds
         {
-            if (zone % _superInterval == 0)
-                return ZoneType.Super;
-
-            if (zone % _safeInterval == 0)
-                return ZoneType.Safe;
-
-            return ZoneType.Normal;
+            get { return _kinds; }
         }
 
-        public int GetNextZoneOfType(int zone, ZoneType zoneType)
+        public ZoneKind GetZoneKind(int zone)
+        {
+            foreach (var kind in _kinds)
+            {
+                if (kind.Matches(zone))
+                {
+                    return kind;
+                }
+            }
+
+            return _kinds[_kinds.Count - 1];
+        }
+
+        public int GetNextZoneOfKind(int zone, string kindId)
         {
             var next = zone + 1;
+            var limit = zone + GetLargestInterval() * _kinds.Count + 1;
 
-            while (GetZoneType(next) != zoneType)
+            while (next <= limit)
             {
+                if (GetZoneKind(next).Id == kindId)
+                {
+                    return next;
+                }
+
                 next++;
             }
 
-            return next;
+            return -1;
+        }
+
+        private bool HasDefaultKind()
+        {
+            foreach (var kind in _kinds)
+            {
+                if (kind.Interval == 1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private int GetLargestInterval()
+        {
+            var largest = 1;
+
+            foreach (var kind in _kinds)
+            {
+                largest = Math.Max(largest, kind.Interval);
+            }
+
+            return largest;
+        }
+
+        private static int CompareByPriorityDescending(ZoneKind left, ZoneKind right)
+        {
+            return right.Priority.CompareTo(left.Priority);
         }
     }
 }

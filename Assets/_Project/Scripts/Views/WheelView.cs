@@ -11,22 +11,6 @@ namespace WheelGame.Views
 {
     public sealed class WheelView : MonoBehaviour
     {
-        [Serializable]
-        private sealed class WheelSkin
-        {
-            [SerializeField] private ZoneType _zoneType;
-            [SerializeField] private string _title;
-            [SerializeField] private Color _titleColor = Color.white;
-            [SerializeField] private Sprite _baseSprite;
-            [SerializeField] private Sprite _indicatorSprite;
-
-            public ZoneType ZoneType => _zoneType;
-            public string Title => _title;
-            public Color TitleColor => _titleColor;
-            public Sprite BaseSprite => _baseSprite;
-            public Sprite IndicatorSprite => _indicatorSprite;
-        }
-
         private const string SpinButtonName = "ui_button_spin";
 
         [Header("References")]
@@ -49,29 +33,38 @@ namespace WheelGame.Views
 
         [Header("Visuals")]
         [SerializeField] private Sprite _bombSprite;
-        [SerializeField] private List<WheelSkin> _skins = new List<WheelSkin>();
 
         private readonly List<WheelSliceView> _slices = new List<WheelSliceView>();
         private Tween _spinTween;
         private Action _spinCompleted;
+        private IRewardIconProvider _icons;
 
         public event Action SpinClicked;
 
-        private static float SliceAngle => 360f / WheelLayout.SliceCount;
+        private static float SliceAngle => 360f / WheelLayout.SLICE_COUNT;
 
-        public void Show(ZoneType zoneType, IReadOnlyList<WheelSliceEntry> wheel)
+        public void Initialize(IRewardIconProvider icons)
+        {
+            _icons = icons;
+        }
+
+        public void Show(ZoneVisuals visuals, IReadOnlyList<WheelSliceEntry> wheel)
         {
             CreateSlicesIfNeeded();
-            ApplySkin(zoneType);
+            ApplyVisuals(visuals);
 
             for (var i = 0; i < _slices.Count; i++)
             {
                 var entry = wheel[i];
 
                 if (entry.IsBomb)
+                {
                     _slices[i].ShowBomb(_bombSprite);
+                }
                 else
-                    _slices[i].ShowReward(entry.Reward.Icon, entry.Amount);
+                {
+                    _slices[i].ShowReward(_icons.GetIcon(entry.Reward.Id), entry.Amount);
+                }
             }
         }
 
@@ -137,7 +130,7 @@ namespace WheelGame.Views
             if (_slices.Count > 0)
                 return;
 
-            for (var i = 0; i < WheelLayout.SliceCount; i++)
+            for (var i = 0; i < WheelLayout.SLICE_COUNT; i++)
             {
                 var slice = Instantiate(_slicePrefab, _sliceContainer);
                 slice.name = $"ui_rect_wheel_slice_{i}";
@@ -152,19 +145,12 @@ namespace WheelGame.Views
             }
         }
 
-        private void ApplySkin(ZoneType zoneType)
+        private void ApplyVisuals(ZoneVisuals visuals)
         {
-            var skin = _skins.Find(candidate => candidate.ZoneType == zoneType);
-            if (skin == null)
-            {
-                Debug.LogWarning($"{name}: no wheel skin for {zoneType}.", this);
-                return;
-            }
-
-            _baseImage.sprite = skin.BaseSprite;
-            _indicatorImage.sprite = skin.IndicatorSprite;
-            _titleText.text = skin.Title;
-            _titleText.color = skin.TitleColor;
+            _baseImage.sprite = visuals.WheelBase;
+            _indicatorImage.sprite = visuals.WheelIndicator;
+            _titleText.text = visuals.Title;
+            _titleText.color = visuals.TitleColor;
         }
 
 #if UNITY_EDITOR
@@ -177,7 +163,7 @@ namespace WheelGame.Views
         private void DebugSpin()
         {
             CreateSlicesIfNeeded();
-            PlaySpin(UnityEngine.Random.Range(0, WheelLayout.SliceCount), null);
+            PlaySpin(UnityEngine.Random.Range(0, WheelLayout.SLICE_COUNT), null);
         }
 #endif
     }

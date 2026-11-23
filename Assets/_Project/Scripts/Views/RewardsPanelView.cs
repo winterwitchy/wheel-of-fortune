@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using WheelGame.Data;
+using WheelGame.Core;
 
 namespace WheelGame.Views
 {
@@ -26,6 +26,7 @@ namespace WheelGame.Views
         #region Private Fields
 
         private RewardCellPool _cells;
+        private IRewardIconProvider _icons;
 
         #endregion
 
@@ -33,33 +34,39 @@ namespace WheelGame.Views
 
         #region Public Methods
 
+        public void Initialize(IRewardIconProvider icons)
+        {
+            _icons = icons;
+        }
+
         public void Clear()
         {
             GetCells().ReleaseAll();
             _content.anchoredPosition = new Vector2(_content.anchoredPosition.x, 0f);
         }
 
-        public RectTransform PrepareClaimTarget(RewardItemData reward, int shownAmount)
+        public RectTransform PrepareClaimTarget(RewardItem reward, int shownAmount)
         {
             var cell = GetCells().GetOrCreate(reward);
+            var icon = _icons.GetIcon(reward.Id);
 
             if (shownAmount > 0)
             {
-                cell.Show(reward.Icon, shownAmount);
+                cell.Show(icon, shownAmount);
             }
             else
             {
-                cell.ShowPlaceholder(reward.Icon);
+                cell.ShowPlaceholder(icon);
             }
 
             Reveal((RectTransform)cell.transform);
             return cell.IconTransform;
         }
 
-        public void ShowClaimedAmount(RewardItemData reward, int amount)
+        public void ShowClaimedAmount(RewardItem reward, int amount)
         {
             var cell = GetCells().GetOrCreate(reward);
-            cell.Show(reward.Icon, amount);
+            cell.Show(_icons.GetIcon(reward.Id), amount);
             cell.PlayPunch();
         }
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
-using WheelGame.Data;
+using WheelGame.Core;
 
 namespace WheelGame.Views
 {
@@ -11,7 +11,7 @@ namespace WheelGame.Views
         private readonly RectTransform _container;
         private readonly string _nameFormat;
         private readonly List<RewardCellView> _cells = new List<RewardCellView>();
-        private readonly Dictionary<RewardItemData, RewardCellView> _activeCells = new Dictionary<RewardItemData, RewardCellView>();
+        private readonly Dictionary<RewardItem, RewardCellView> _activeCells = new Dictionary<RewardItem, RewardCellView>();
 
         public RewardCellPool(RewardCellView prefab, RectTransform container, string nameFormat)
         {
@@ -20,12 +20,12 @@ namespace WheelGame.Views
             _nameFormat = nameFormat;
         }
 
-        public bool TryGet(RewardItemData reward, out RewardCellView cell)
+        public bool TryGet(RewardItem reward, out RewardCellView cell)
         {
             return _activeCells.TryGetValue(reward, out cell);
         }
 
-        public RewardCellView GetOrCreate(RewardItemData reward)
+        public RewardCellView GetOrCreate(RewardItem reward)
         {
             if (_activeCells.TryGetValue(reward, out var cell))
             {

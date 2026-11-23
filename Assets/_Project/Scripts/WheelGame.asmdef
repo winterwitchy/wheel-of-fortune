@@ -3,7 +3,8 @@
     "rootNamespace": "WheelGame",
     "references": [
         "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:10865675157177d4d9ac267dfe0ac51e"
+        "GUID:10865675157177d4d9ac267dfe0ac51e",
+        "WheelGame.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

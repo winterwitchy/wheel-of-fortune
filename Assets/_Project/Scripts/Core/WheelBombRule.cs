@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using WheelGame.Data;
 
 namespace WheelGame.Core
 {
@@ -14,9 +13,9 @@ namespace WheelGame.Core
             _random = random;
         }
 
-        public static int GetRequiredBombCount(ZoneType zoneType)
+        public static int GetRequiredBombCount(ZoneKind zoneKind)
         {
-            if (zoneType == ZoneType.Normal)
+            if (zoneKind.HasBomb)
             {
                 return 1;
             }
@@ -24,11 +23,11 @@ namespace WheelGame.Core
             return 0;
         }
 
-        public void Enforce(List<WheelSliceEntry> slices, IReadOnlyList<WheelSliceEntry> original, IReadOnlyList<int> alterationOrder, ZoneType zoneType)
+        public void Enforce(List<WheelSliceEntry> slices, IReadOnlyList<WheelSliceEntry> original, IReadOnlyList<int> alterationOrder, ZoneKind zoneKind)
         {
             var bombIndices = FindBombIndices(slices);
 
-            if (GetRequiredBombCount(zoneType) == 0)
+            if (GetRequiredBombCount(zoneKind) == 0)
             {
                 foreach (var bombIndex in bombIndices)
                 {

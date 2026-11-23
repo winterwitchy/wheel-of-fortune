@@ -642,22 +642,6 @@ MonoBehaviour:
   _fullTurns: 5
   _spinEase: 12
   _bombSprite: {fileID: 21300000, guid: fb8157bc4943f5049809664fe6c67bb6, type: 3}
-  _skins:
-  - _zoneType: 0
-    _title: BRONZE SPIN
-    _titleColor: {r: 0.9098039, g: 0.6392157, b: 0.36078432, a: 1}
-    _baseSprite: {fileID: 21300000, guid: a8e6e64d9fb2d2747a9521d202d75dce, type: 3}
-    _indicatorSprite: {fileID: 21300000, guid: 1a96b57c600e63e4bbc0dddbea2cde2e, type: 3}
-  - _zoneType: 1
-    _title: SILVER SPIN
-    _titleColor: {r: 0.8509804, g: 0.8509804, b: 0.8509804, a: 1}
-    _baseSprite: {fileID: 21300000, guid: 6b4d44db160ed924aaa56cc7babc8a1e, type: 3}
-    _indicatorSprite: {fileID: 21300000, guid: 57e6c355f7081e046871c8b26263e440, type: 3}
-  - _zoneType: 2
-    _title: GOLDEN SPIN
-    _titleColor: {r: 0.9490196, g: 0.75686276, b: 0.30588236, a: 1}
-    _baseSprite: {fileID: 21300000, guid: 45d6c0be51077394abef4c22c21c7123, type: 3}
-    _indicatorSprite: {fileID: 21300000, guid: d1ab2103d50a82447996b31192c7ee63, type: 3}
 --- !u!114 &313927610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -678,22 +662,6 @@ MonoBehaviour:
   _pulseDuration: 1.6
   _pulseAmount: 0.12
   _styleTransition: 0.6
-  _styles:
-  - _zoneType: 0
-    _glowColor: {r: 0.9098039, g: 0.6392157, b: 0.36078432, a: 0.27450982}
-    _raysColor: {r: 1, g: 1, b: 1, a: 0.09803922}
-    _scale: 1
-    _secondsPerTurn: 40
-  - _zoneType: 1
-    _glowColor: {r: 0.8509804, g: 0.89411765, b: 0.9411765, a: 0.3529412}
-    _raysColor: {r: 1, g: 1, b: 1, a: 0.15686275}
-    _scale: 1.05
-    _secondsPerTurn: 30
-  - _zoneType: 2
-    _glowColor: {r: 1, g: 0.8235294, b: 0.3529412, a: 0.6666667}
-    _raysColor: {r: 1, g: 0.9137255, b: 0.627451, a: 0.43137255}
-    _scale: 1.2
-    _secondsPerTurn: 14
   _bombDuration: 0.5
   _shakeStrength: 30
   _flashAlpha: 0.5
@@ -5709,23 +5677,13 @@ MonoBehaviour:
   _currentPunchTarget: {fileID: 2063351182}
   _currentPunchScale: 0.15
   _currentPunchDuration: 0.25
-  _nextSafeText: {fileID: 1377607129}
-  _nextSuperText: {fileID: 429489417}
+  _badges:
+  - _zone: {fileID: 11400000, guid: 28d79309921d47868c96d9e74f1720ce, type: 2}
+    _valueText: {fileID: 429489417}
+  - _zone: {fileID: 11400000, guid: 6917f582610340b083b1e55d68cc9050, type: 2}
+    _valueText: {fileID: 1377607129}
   _slideDuration: 0.35
   _slideEase: 9
-  _styles:
-  - _zoneType: 0
-    _numberColor: {r: 1, g: 1, b: 1, a: 1}
-    _currentSprite: {fileID: 21300000, guid: 778bef63a822d3d458f2a09b95d1c705, type: 3}
-    _currentTint: {r: 1, g: 1, b: 1, a: 1}
-  - _zoneType: 1
-    _numberColor: {r: 0.55, g: 0.9, b: 0.3, a: 1}
-    _currentSprite: {fileID: 21300000, guid: 66563ef78a5dad542a5479d05a9bb82f, type: 3}
-    _currentTint: {r: 1, g: 1, b: 1, a: 1}
-  - _zoneType: 2
-    _numberColor: {r: 1, g: 0.8, b: 0.25, a: 1}
-    _currentSprite: {fileID: 21300000, guid: 61bf76b4b6866d945b470f56ee4055cc, type: 3}
-    _currentTint: {r: 1, g: 0.72, b: 0.18, a: 1}
 --- !u!1 &1671143258
 GameObject:
   m_ObjectHideFlags: 0

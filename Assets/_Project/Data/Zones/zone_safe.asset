@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3398d2af1be4fe584e2b9693ccd029c, type: 3}
+  m_Name: zone_safe
+  m_EditorClassIdentifier: 
+  _id: safe
+  _interval: 5
+  _priority: 10
+  _hasBomb: 0
+  _bombSlotPool: {fileID: 11400000, guid: 8c7e8e575d824e82ae07924c3d5d7aad, type: 2}
+  _multiplier: 2
+  _hasOwnSlices: 0
+  _slices: []
+  _visuals:
+    _title: SILVER SPIN
+    _titleColor: {r: 0.8509804, g: 0.8509804, b: 0.8509804, a: 1}
+    _wheelBase: {fileID: 21300000, guid: 6b4d44db160ed924aaa56cc7babc8a1e, type: 3}
+    _wheelIndicator: {fileID: 21300000, guid: 57e6c355f7081e046871c8b26263e440, type: 3}
+    _glowColor: {r: 0.8509804, g: 0.89411765, b: 0.9411765, a: 0.3529412}
+    _raysColor: {r: 1, g: 1, b: 1, a: 0.15686275}
+    _effectScale: 1.05
+    _raysSecondsPerTurn: 30
+    _numberColor: {r: 0.55, g: 0.9, b: 0.3, a: 1}
+    _currentZoneSprite: {fileID: 21300000, guid: 66563ef78a5dad542a5479d05a9bb82f, type: 3}
+    _currentZoneTint: {r: 1, g: 1, b: 1, a: 1}

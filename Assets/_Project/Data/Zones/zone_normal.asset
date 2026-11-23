@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3398d2af1be4fe584e2b9693ccd029c, type: 3}
+  m_Name: zone_normal
+  m_EditorClassIdentifier: 
+  _id: normal
+  _interval: 1
+  _priority: 0
+  _hasBomb: 1
+  _bombSlotPool: {fileID: 0}
+  _multiplier: 1
+  _hasOwnSlices: 0
+  _slices: []
+  _visuals:
+    _title: BRONZE SPIN
+    _titleColor: {r: 0.9098039, g: 0.6392157, b: 0.36078432, a: 1}
+    _wheelBase: {fileID: 21300000, guid: a8e6e64d9fb2d2747a9521d202d75dce, type: 3}
+    _wheelIndicator: {fileID: 21300000, guid: 1a96b57c600e63e4bbc0dddbea2cde2e, type: 3}
+    _glowColor: {r: 0.9098039, g: 0.6392157, b: 0.36078432, a: 0.27450982}
+    _raysColor: {r: 1, g: 1, b: 1, a: 0.09803922}
+    _effectScale: 1
+    _raysSecondsPerTurn: 40
+    _numberColor: {r: 1, g: 1, b: 1, a: 1}
+    _currentZoneSprite: {fileID: 21300000, guid: 778bef63a822d3d458f2a09b95d1c705, type: 3}
+    _currentZoneTint: {r: 1, g: 1, b: 1, a: 1}

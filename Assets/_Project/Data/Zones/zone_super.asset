@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3398d2af1be4fe584e2b9693ccd029c, type: 3}
+  m_Name: zone_super
+  m_EditorClassIdentifier: 
+  _id: super
+  _interval: 30
+  _priority: 20
+  _hasBomb: 0
+  _bombSlotPool: {fileID: 0}
+  _multiplier: 5
+  _hasOwnSlices: 1
+  _slices:
+  - _pool: {fileID: 11400000, guid: 01800f2f3252408b9442ed713b208307, type: 2}
+    _count: 1
+  - _pool: {fileID: 11400000, guid: ba998436ab2241cd82c525b2c53e34b3, type: 2}
+    _count: 1
+  - _pool: {fileID: 11400000, guid: 57b104e27ff048dbb66480a1836e96f7, type: 2}
+    _count: 1
+  - _pool: {fileID: 11400000, guid: 8337628baa3e490faac98b8d0c29df88, type: 2}
+    _count: 1
+  - _pool: {fileID: 11400000, guid: 0b2d5cdc15754f7091212a1bba13d249, type: 2}
+    _count: 2
+  - _pool: {fileID: 11400000, guid: e7dbcb83bea64eccae3d47a097c18da8, type: 2}
+    _count: 2
+  _visuals:
+    _title: GOLDEN SPIN
+    _titleColor: {r: 0.9490196, g: 0.75686276, b: 0.30588236, a: 1}
+    _wheelBase: {fileID: 21300000, guid: 45d6c0be51077394abef4c22c21c7123, type: 3}
+    _wheelIndicator: {fileID: 21300000, guid: d1ab2103d50a82447996b31192c7ee63, type: 3}
+    _glowColor: {r: 1, g: 0.8235294, b: 0.3529412, a: 0.6666667}
+    _raysColor: {r: 1, g: 0.9137255, b: 0.627451, a: 0.43137255}
+    _effectScale: 1.2
+    _raysSecondsPerTurn: 14
+    _numberColor: {r: 1, g: 0.8, b: 0.25, a: 1}
+    _currentZoneSprite: {fileID: 21300000, guid: 61bf76b4b6866d945b470f56ee4055cc, type: 3}
+    _currentZoneTint: {r: 1, g: 0.72, b: 0.18, a: 1}

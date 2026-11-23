@@ -1,7 +1,6 @@
 using System;
 using NUnit.Framework;
 using WheelGame.Core;
-using WheelGame.Data;
 
 namespace WheelGame.Tests.EditMode
 {
@@ -15,7 +14,7 @@ namespace WheelGame.Tests.EditMode
         private const string GOLD = "gold";
         private const int STARTING_GOLD = 1000;
 
-        private RewardItemData _reward;
+        private RewardItem _reward;
         private InMemoryWallet _wallet;
         private InMemoryInventory _inventory;
         private RewardVault _vault;
@@ -38,7 +37,7 @@ namespace WheelGame.Tests.EditMode
 
             Assert.AreEqual(1, session.CurrentZone);
             Assert.AreEqual(SessionState.ReadyToSpin, session.State);
-            Assert.AreEqual(WheelLayout.SliceCount, session.CurrentWheel.Count);
+            Assert.AreEqual(WheelLayout.SLICE_COUNT, session.CurrentWheel.Count);
         }
 
         [Test]
@@ -307,7 +306,7 @@ namespace WheelGame.Tests.EditMode
         private WheelSession CreateSession(LeaveRule leaveRule, params int[] spinIndices)
         {
             return new WheelSession(
-                new ZoneRules(5, 30),
+                TestZones.CreateRules(),
                 new FixedWheelGenerator(_reward, RewardAmount, BombIndex),
                 leaveRule,
                 new RevivePricing(GOLD, REVIVE_BASE_COST, REVIVE_COST_MULTIPLIER),

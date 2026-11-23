@@ -1,5 +1,3 @@
-using WheelGame.Data;
-
 namespace WheelGame.Core
 {
     public readonly struct SpinResult
@@ -11,6 +9,7 @@ namespace WheelGame.Core
         }
 
         public int SliceIndex { get; }
+
         public WheelSliceEntry Slice { get; }
     }
 }

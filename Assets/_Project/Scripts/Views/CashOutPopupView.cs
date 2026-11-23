@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using WheelGame.Data;
+using WheelGame.Core;
 
 namespace WheelGame.Views
 {
@@ -17,10 +17,16 @@ namespace WheelGame.Views
         [SerializeField] private Button _continueButton;
 
         private RewardCellPool _cells;
+        private IRewardIconProvider _icons;
 
         public event Action ContinueClicked;
 
-        public void Show(IReadOnlyDictionary<RewardItemData, int> rewards)
+        public void Initialize(IRewardIconProvider icons)
+        {
+            _icons = icons;
+        }
+
+        public void Show(IReadOnlyDictionary<RewardItem, int> rewards)
         {
             if (_cells == null)
             {
@@ -31,7 +37,7 @@ namespace WheelGame.Views
 
             foreach (var pair in rewards)
             {
-                _cells.GetOrCreate(pair.Key).Show(pair.Key.Icon, pair.Value);
+                _cells.GetOrCreate(pair.Key).Show(_icons.GetIcon(pair.Key.Id), pair.Value);
             }
 
             _emptyState.SetActive(rewards.Count == 0);

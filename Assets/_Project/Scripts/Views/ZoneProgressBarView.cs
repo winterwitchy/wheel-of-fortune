@@ -5,7 +5,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using WheelGame.Core;
+using WheelGame.Data;
 
 namespace WheelGame.Views
 {
@@ -14,31 +14,19 @@ namespace WheelGame.Views
         #region Nested Types
 
         [Serializable]
-        private sealed class ZoneStyle
+        private sealed class UpcomingZoneBadge
         {
-            [SerializeField] private ZoneType _zoneType;
-            [SerializeField] private Color _numberColor = Color.white;
-            [SerializeField] private Sprite _currentSprite;
-            [SerializeField] private Color _currentTint = Color.white;
+            [SerializeField] private ZoneDefinition _zone;
+            [SerializeField] private TMP_Text _valueText;
 
-            public ZoneType ZoneType
+            public ZoneDefinition Zone
             {
-                get { return _zoneType; }
+                get { return _zone; }
             }
 
-            public Color NumberColor
+            public TMP_Text ValueText
             {
-                get { return _numberColor; }
-            }
-
-            public Sprite CurrentSprite
-            {
-                get { return _currentSprite; }
-            }
-
-            public Color CurrentTint
-            {
-                get { return _currentTint; }
+                get { return _valueText; }
             }
         }
 
@@ -66,22 +54,19 @@ namespace WheelGame.Views
         [SerializeField, Min(0f)] private float _currentPunchDuration = 0.25f;
 
         [Header("Upcoming Zones")]
-        [SerializeField] private TMP_Text _nextSafeText;
-        [SerializeField] private TMP_Text _nextSuperText;
+        [SerializeField] private List<UpcomingZoneBadge> _badges = new List<UpcomingZoneBadge>();
 
         [Header("Slide")]
         [SerializeField, Min(0f)] private float _slideDuration = 0.35f;
         [SerializeField] private Ease _slideEase = Ease.OutCubic;
-
-        [Header("Styles")]
-        [SerializeField] private List<ZoneStyle> _styles = new List<ZoneStyle>();
 
         #endregion
 
         #region Private Fields
 
         private readonly List<ZoneCellView> _cells = new List<ZoneCellView>();
-        private Func<int, ZoneType> _zoneTypeLookup;
+        private Func<int, ZoneVisuals> _visualsLookup;
+        private Func<string, int> _nextZoneLookup;
         private Tween _slideTween;
         private int _shownZone;
         private int _pendingZone;
@@ -90,16 +75,16 @@ namespace WheelGame.Views
 
         #region Public Methods
 
-        public void Initialize(Func<int, ZoneType> zoneTypeLookup)
+        public void Initialize(Func<int, ZoneVisuals> visualsLookup, Func<string, int> nextZoneLookup)
         {
-            _zoneTypeLookup = zoneTypeLookup;
+            _visualsLookup = visualsLookup;
+            _nextZoneLookup = nextZoneLookup;
             CreateCellsIfNeeded();
         }
 
-        public void Show(int zone, int nextSafeZone, int nextSuperZone)
+        public void Show(int zone)
         {
-            _nextSafeText.text = nextSafeZone.ToString(CultureInfo.InvariantCulture);
-            _nextSuperText.text = nextSuperZone.ToString(CultureInfo.InvariantCulture);
+            ShowUpcomingZones();
 
             CreateCellsIfNeeded();
             StopSlide();
@@ -173,36 +158,29 @@ namespace WheelGame.Views
                     alpha = _passedAlpha;
                 }
 
-                _cells[i].Show(cellZone, FindStyle(cellZone).NumberColor, alpha);
+                _cells[i].Show(cellZone, _visualsLookup(cellZone).NumberColor, alpha);
             }
 
-            ApplyCurrentStyle(FindStyle(zone));
+            ApplyCurrentVisuals(_visualsLookup(zone));
         }
 
-        private void ApplyCurrentStyle(ZoneStyle style)
+        private void ApplyCurrentVisuals(ZoneVisuals visuals)
         {
-            _currentBackground.sprite = style.CurrentSprite;
-            _currentBackground.color = style.CurrentTint;
+            _currentBackground.sprite = visuals.CurrentZoneSprite;
+            _currentBackground.color = visuals.CurrentZoneTint;
         }
 
-        private ZoneStyle FindStyle(int zone)
+        private void ShowUpcomingZones()
         {
-            var zoneType = ZoneType.Normal;
-
-            if (_zoneTypeLookup != null)
+            foreach (var badge in _badges)
             {
-                zoneType = _zoneTypeLookup(zone);
-            }
-
-            foreach (var style in _styles)
-            {
-                if (style.ZoneType == zoneType)
+                if (!badge.Zone || !badge.ValueText)
                 {
-                    return style;
+                    continue;
                 }
-            }
 
-            return _styles[0];
+                badge.ValueText.text = _nextZoneLookup(badge.Zone.Id).ToString(CultureInfo.InvariantCulture);
+            }
         }
 
         #endregion

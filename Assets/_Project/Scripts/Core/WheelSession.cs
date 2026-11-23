@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using WheelGame.Data;
 
 namespace WheelGame.Core
 {
@@ -11,7 +10,7 @@ namespace WheelGame.Core
         private readonly LeaveRule _leaveRule;
         private readonly RevivePricing _revivePricing;
         private readonly IRandomProvider _random;
-        private readonly Dictionary<RewardItemData, int> _collectedRewards = new Dictionary<RewardItemData, int>();
+        private readonly Dictionary<RewardItem, int> _collectedRewards = new Dictionary<RewardItem, int>();
 
         private SpinResult _pendingResult;
         private int _revivesUsed;
@@ -27,17 +26,17 @@ namespace WheelGame.Core
 
         public event Action StateChanged;
         public event Action RunStarted;
-        public event Action<int, ZoneType, IReadOnlyList<WheelSliceEntry>> ZoneStarted;
+        public event Action<int, ZoneKind, IReadOnlyList<WheelSliceEntry>> ZoneStarted;
         public event Action<SpinResult> SpinStarted;
         public event Action<WheelSliceEntry> RewardCollected;
         public event Action BombHit;
-        public event Action<IReadOnlyDictionary<RewardItemData, int>> CashedOut;
+        public event Action<IReadOnlyDictionary<RewardItem, int>> CashedOut;
 
         public SessionState State { get; private set; }
         public int CurrentZone { get; private set; }
-        public ZoneType CurrentZoneType { get; private set; }
+        public ZoneKind CurrentZoneKind { get; private set; }
         public IReadOnlyList<WheelSliceEntry> CurrentWheel { get; private set; }
-        public IReadOnlyDictionary<RewardItemData, int> CollectedRewards => _collectedRewards;
+        public IReadOnlyDictionary<RewardItem, int> CollectedRewards => _collectedRewards;
 
         public bool CanSpin => State == SessionState.ReadyToSpin;
         public bool CanLeave
@@ -65,9 +64,9 @@ namespace WheelGame.Core
                 return _collectedRewards.Count > 0;
             }
         }
-        public int GetNextZoneOfType(ZoneType zoneType)
+        public int GetNextZoneOfKind(string kindId)
         {
-            return _zoneRules.GetNextZoneOfType(CurrentZone, zoneType);
+            return _zoneRules.GetNextZoneOfKind(CurrentZone, kindId);
         }
 
         public int ReviveCost
@@ -78,9 +77,9 @@ namespace WheelGame.Core
             }
         }
 
-        public ZoneType GetZoneType(int zone)
+        public ZoneKind GetZoneKind(int zone)
         {
-            return _zoneRules.GetZoneType(zone);
+            return _zoneRules.GetZoneKind(zone);
         }
 
         public void StartRun()
@@ -176,7 +175,7 @@ namespace WheelGame.Core
                 throw new InvalidOperationException($"Cannot leave while {State} at zone {CurrentZone}.");
             }
 
-            var cashedOutRewards = new Dictionary<RewardItemData, int>(_collectedRewards);
+            var cashedOutRewards = new Dictionary<RewardItem, int>(_collectedRewards);
 
             foreach (var pair in cashedOutRewards)
             {
@@ -195,7 +194,7 @@ namespace WheelGame.Core
         {
             if (_leaveRule == LeaveRule.SafeZonesOnly)
             {
-                return CurrentZoneType != ZoneType.Normal;
+                return !CurrentZoneKind.HasBomb;
             }
 
             return true;
@@ -204,11 +203,11 @@ namespace WheelGame.Core
         private void EnterZone(int zone)
         {
             CurrentZone = zone;
-            CurrentZoneType = _zoneRules.GetZoneType(zone);
-            CurrentWheel = _wheelGenerator.Generate(zone, CurrentZoneType);
+            CurrentZoneKind = _zoneRules.GetZoneKind(zone);
+            CurrentWheel = _wheelGenerator.Generate(zone, CurrentZoneKind);
 
             SetState(SessionState.ReadyToSpin);
-            ZoneStarted?.Invoke(CurrentZone, CurrentZoneType, CurrentWheel);
+            ZoneStarted?.Invoke(CurrentZone, CurrentZoneKind, CurrentWheel);
         }
 
         private void AddReward(WheelSliceEntry slice)

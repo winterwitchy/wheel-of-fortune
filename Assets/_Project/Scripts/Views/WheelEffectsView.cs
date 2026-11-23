@@ -1,30 +1,13 @@
 using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using WheelGame.Core;
+using WheelGame.Data;
 
 namespace WheelGame.Views
 {
     public sealed class WheelEffectsView : MonoBehaviour
     {
-        [Serializable]
-        private sealed class ZoneEffectStyle
-        {
-            [SerializeField] private ZoneType _zoneType;
-            [SerializeField] private Color _glowColor = Color.white;
-            [SerializeField] private Color _raysColor = Color.white;
-            [SerializeField, Min(0.1f)] private float _scale = 1f;
-            [SerializeField, Min(1f)] private float _secondsPerTurn = 40f;
-
-            public ZoneType ZoneType => _zoneType;
-            public Color GlowColor => _glowColor;
-            public Color RaysColor => _raysColor;
-            public float Scale => _scale;
-            public float SecondsPerTurn => _secondsPerTurn;
-        }
-
         [Header("References")]
         [SerializeField] private RectTransform _effectsRoot;
         [SerializeField] private Image _glow;
@@ -38,7 +21,6 @@ namespace WheelGame.Views
 
         [Header("Zone Change")]
         [SerializeField, Min(0f)] private float _styleTransition = 0.6f;
-        [SerializeField] private List<ZoneEffectStyle> _styles = new List<ZoneEffectStyle>();
 
         [Header("Bomb")]
         [SerializeField, Min(0.1f)] private float _bombDuration = 0.5f;
@@ -49,23 +31,16 @@ namespace WheelGame.Views
         private Tween _pulseTween;
         private Tween _raysTween;
 
-        public void SetZoneType(ZoneType zoneType)
+        public void SetZoneVisuals(ZoneVisuals visuals)
         {
-            var style = _styles.Find(candidate => candidate.ZoneType == zoneType);
-            if (style == null)
-            {
-                Debug.LogWarning($"{name}: no effect style for {zoneType}.", this);
-                return;
-            }
-
             _glow.DOKill();
             _rays.DOKill();
             _effectsRoot.DOKill();
 
-            _glow.DOColor(style.GlowColor, _styleTransition).SetLink(gameObject);
-            _rays.DOColor(style.RaysColor, _styleTransition).SetLink(gameObject);
-            _effectsRoot.DOScale(style.Scale, _styleTransition).SetEase(Ease.OutBack).SetLink(gameObject);
-            StartRaysRotation(style.SecondsPerTurn);
+            _glow.DOColor(visuals.GlowColor, _styleTransition).SetLink(gameObject);
+            _rays.DOColor(visuals.RaysColor, _styleTransition).SetLink(gameObject);
+            _effectsRoot.DOScale(visuals.EffectScale, _styleTransition).SetEase(Ease.OutBack).SetLink(gameObject);
+            StartRaysRotation(visuals.RaysSecondsPerTurn);
         }
 
         public void PlayBomb(Action onComplete)

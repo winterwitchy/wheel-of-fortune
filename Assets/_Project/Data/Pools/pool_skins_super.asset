@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 002c3b044bf34e188fb8ee59e4a60b07, type: 3}
+  m_Name: pool_skins_super
+  m_EditorClassIdentifier: 
+  _items:
+  - {fileID: 11400000, guid: 18f411220a590934e9dd1def8a8bceb9, type: 2}
+  - {fileID: 11400000, guid: 4bdc7c795d131e34b913356b5cc35a94, type: 2}
+  - {fileID: 11400000, guid: 2c526677228369d4ca903b34f969fe75, type: 2}
+  - {fileID: 11400000, guid: b2ca52a1e8e69844397cd77712424695, type: 2}
+  - {fileID: 11400000, guid: 41d925502ba2f4c4c8abf02c44ad5214, type: 2}
+  - {fileID: 11400000, guid: 04c6920791a514a43aca5351e8c9a1f0, type: 2}
+  - {fileID: 11400000, guid: 84ba324df70a732499be9e2d0549a60f, type: 2}
+  - {fileID: 11400000, guid: 2953f29754f39b54ba1a5dc57720ed86, type: 2}
+  _hasAmountFormula: 0
+  _amountFormula:
+    _growth: 1
+    _divisor: 1
+    _offset: 0
+    _step: 1
+  _isUniquePerWheel: 1
+  _fallbackPool: {fileID: 11400000, guid: 0b2d5cdc15754f7091212a1bba13d249, type: 2}

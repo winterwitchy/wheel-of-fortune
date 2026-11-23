@@ -1,40 +1,39 @@
 using System.Collections.Generic;
-using WheelGame.Data;
 
 namespace WheelGame.Core
 {
     public sealed class OverriddenWheelGenerator : IWheelGenerator
     {
         private readonly IWheelGenerator _inner;
-        private readonly IReadOnlyList<SliceOverride> _overrides;
+        private readonly IReadOnlyList<SliceOverrideRule> _overrides;
         private readonly WheelBombRule _bombRule;
 
-        public OverriddenWheelGenerator(IWheelGenerator inner, IReadOnlyList<SliceOverride> overrides, WheelBombRule bombRule)
+        public OverriddenWheelGenerator(IWheelGenerator inner, IReadOnlyList<SliceOverrideRule> overrides, WheelBombRule bombRule)
         {
             _inner = inner;
             _overrides = overrides;
             _bombRule = bombRule;
         }
 
-        public IReadOnlyList<WheelSliceEntry> Generate(int zone, ZoneType zoneType)
+        public IReadOnlyList<WheelSliceEntry> Generate(int zone, ZoneKind zoneKind)
         {
-            var original = _inner.Generate(zone, zoneType);
+            var original = _inner.Generate(zone, zoneKind);
             var slices = new List<WheelSliceEntry>(original);
             var alterationOrder = CreateUnalteredOrder(slices.Count);
 
-            ApplyOverrides(zone, zoneType, slices, alterationOrder);
-            _bombRule.Enforce(slices, original, alterationOrder, zoneType);
+            ApplyOverrides(zone, zoneKind, slices, alterationOrder);
+            _bombRule.Enforce(slices, original, alterationOrder, zoneKind);
 
             return slices;
         }
 
-        private void ApplyOverrides(int zone, ZoneType zoneType, List<WheelSliceEntry> slices, int[] alterationOrder)
+        private void ApplyOverrides(int zone, ZoneKind zoneKind, List<WheelSliceEntry> slices, int[] alterationOrder)
         {
             var order = 0;
 
             foreach (var sliceOverride in _overrides)
             {
-                if (!IsApplicable(sliceOverride, zone, zoneType, slices.Count))
+                if (!IsApplicable(sliceOverride, zone, zoneKind, slices.Count))
                 {
                     continue;
                 }
@@ -45,7 +44,7 @@ namespace WheelGame.Core
             }
         }
 
-        private static bool IsApplicable(SliceOverride sliceOverride, int zone, ZoneType zoneType, int sliceCount)
+        private static bool IsApplicable(SliceOverrideRule sliceOverride, int zone, ZoneKind zoneKind, int sliceCount)
         {
             if (sliceOverride.Zone != zone)
             {
@@ -57,12 +56,7 @@ namespace WheelGame.Core
                 return false;
             }
 
-            if (!sliceOverride.IsValid)
-            {
-                return false;
-            }
-
-            if (sliceOverride.IsBomb && WheelBombRule.GetRequiredBombCount(zoneType) == 0)
+            if (sliceOverride.IsBomb && WheelBombRule.GetRequiredBombCount(zoneKind) == 0)
             {
                 return false;
             }

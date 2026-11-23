@@ -29,10 +29,11 @@ namespace WheelGame.Infrastructure
         private void Start()
         {
             var random = new UnityRandomProvider();
-            var zoneRules = new ZoneRules(_config.SafeInterval, _config.SuperInterval);
-            var proceduralGenerator = new ProceduralWheelGenerator(_config.Generation, random);
-            var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, _config.SliceOverrides, new WheelBombRule(random));
-            var goldId = _config.Generation.GoldReward.Id;
+            var factory = new CoreModelFactory();
+            var zoneRules = new ZoneRules(factory.CreateZoneKinds(_config.Zones));
+            var proceduralGenerator = new ProceduralWheelGenerator(factory.CreateBands(_config.Bands), random);
+            var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, factory.CreateOverrides(_config.SliceOverrides), new WheelBombRule(random));
+            var goldId = factory.GetReward(_config.ReviveCurrency).Id;
             var revivePricing = new RevivePricing(goldId, _config.ReviveBaseCost, _config.ReviveCostMultiplier);
             var session = new WheelSession(zoneRules, wheelGenerator, _config.LeaveRule, revivePricing, random);
 
@@ -42,7 +43,7 @@ namespace WheelGame.Infrastructure
             _persistence.Restore(goldId, _config.StartingGold);
 
             _presenter = new GamePresenter(
-                session, wallet, new RewardVault(wallet, inventory), goldId,
+                session, wallet, new RewardVault(wallet, inventory), goldId, new ZoneCatalog(_config.Zones), new RewardIconCatalog(factory.KnownRewards),
                 _goldView, _zoneProgressBarView, _wheelView, _wheelEffectsView,
                 _rewardsPanelView, _rewardClaimView, _bombPopupView, _cashOutPopupView);
 

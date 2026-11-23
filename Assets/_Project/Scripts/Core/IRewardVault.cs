@@ -1,9 +1,7 @@
-using WheelGame.Data;
-
 namespace WheelGame.Core
 {
     public interface IRewardVault
     {
-        void Deposit(RewardItemData reward, int amount);
+        void Deposit(RewardItem reward, int amount);
     }
 }

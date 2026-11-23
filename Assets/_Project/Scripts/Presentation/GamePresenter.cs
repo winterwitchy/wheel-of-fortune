@@ -12,6 +12,8 @@ namespace WheelGame.Presentation
         private readonly IWallet _wallet;
         private readonly IRewardVault _vault;
         private readonly string _goldId;
+        private readonly ZoneCatalog _zones;
+        private readonly IRewardIconProvider _icons;
         private readonly GoldView _goldView;
         private readonly ZoneProgressBarView _zoneProgressBarView;
         private readonly WheelView _wheelView;
@@ -22,11 +24,11 @@ namespace WheelGame.Presentation
         private readonly CashOutPopupView _cashOutPopupView;
 
         private int _spinningSliceIndex;
-        private RewardItemData _claimedReward;
+        private RewardItem _claimedReward;
         private int _claimedTotal;
 
         public GamePresenter(
-            WheelSession session, IWallet wallet, IRewardVault vault, string goldId,
+            WheelSession session, IWallet wallet, IRewardVault vault, string goldId, ZoneCatalog zones, IRewardIconProvider icons,
             GoldView goldView, ZoneProgressBarView zoneProgressBarView, WheelView wheelView, WheelEffectsView wheelEffectsView,
             RewardsPanelView rewardsPanelView, RewardClaimView rewardClaimView, BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
@@ -34,6 +36,8 @@ namespace WheelGame.Presentation
             _wallet = wallet;
             _vault = vault;
             _goldId = goldId;
+            _zones = zones;
+            _icons = icons;
             _goldView = goldView;
             _zoneProgressBarView = zoneProgressBarView;
             _wheelView = wheelView;
@@ -60,7 +64,10 @@ namespace WheelGame.Presentation
             _cashOutPopupView.ContinueClicked += HandleContinueClicked;
             _wallet.BalanceChanged += HandleBalanceChanged;
 
-            _zoneProgressBarView.Initialize(_session.GetZoneType);
+            _zoneProgressBarView.Initialize(GetZoneVisuals, _session.GetNextZoneOfKind);
+            _wheelView.Initialize(_icons);
+            _rewardsPanelView.Initialize(_icons);
+            _cashOutPopupView.Initialize(_icons);
             _goldView.Show(_wallet.GetBalance(_goldId));
             _session.StartRun();
         }
@@ -114,7 +121,7 @@ namespace WheelGame.Presentation
 
             _claimedReward = slice.Reward;
             _claimedTotal = total;
-            _rewardClaimView.Play(slice.Reward.Icon, slice.Amount, _wheelView.GetSliceIconPosition(_spinningSliceIndex), target, HandleClaimArrived);
+            _rewardClaimView.Play(_icons.GetIcon(slice.Reward.Id), slice.Amount, _wheelView.GetSliceIconPosition(_spinningSliceIndex), target, HandleClaimArrived);
         }
 
         private void HandleClaimArrived()
@@ -124,11 +131,17 @@ namespace WheelGame.Presentation
             _session.FinishCollecting();
         }
 
-        private void HandleZoneStarted(int zone, ZoneType zoneType, IReadOnlyList<WheelSliceEntry> wheel)
+        private void HandleZoneStarted(int zone, ZoneKind zoneKind, IReadOnlyList<WheelSliceEntry> wheel)
         {
-            _zoneProgressBarView.Show(zone, _session.GetNextZoneOfType(ZoneType.Safe), _session.GetNextZoneOfType(ZoneType.Super));
-            _wheelView.Show(zoneType, wheel);
-            _wheelEffectsView.SetZoneType(zoneType);
+            var visuals = _zones.GetVisuals(zoneKind.Id);
+            _zoneProgressBarView.Show(zone);
+            _wheelView.Show(visuals, wheel);
+            _wheelEffectsView.SetZoneVisuals(visuals);
+        }
+
+        private ZoneVisuals GetZoneVisuals(int zone)
+        {
+            return _zones.GetVisuals(_session.GetZoneKind(zone).Id);
         }
 
         private void HandleStateChanged()
@@ -163,7 +176,7 @@ namespace WheelGame.Presentation
             _bombPopupView.Close();
         }
 
-        private void HandleCashedOut(IReadOnlyDictionary<RewardItemData, int> rewards)
+        private void HandleCashedOut(IReadOnlyDictionary<RewardItem, int> rewards)
         {
             _cashOutPopupView.Show(rewards);
         }

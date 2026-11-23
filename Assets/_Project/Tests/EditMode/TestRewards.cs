@@ -1,23 +1,25 @@
-using System.Reflection;
-using UnityEngine;
-using WheelGame.Data;
+using System.Collections.Generic;
+using WheelGame.Core;
 
 namespace WheelGame.Tests.EditMode
 {
     public static class TestRewards
     {
-        public static RewardItemData Create(string id, bool isCurrency)
+        public static RewardItem Create(string id, bool isCurrency)
         {
-            var reward = ScriptableObject.CreateInstance<RewardItemData>();
-            SetField(reward, "_id", id);
-            SetField(reward, "_isCurrency", isCurrency);
-            return reward;
+            return new RewardItem(id, isCurrency);
         }
 
-        private static void SetField(RewardItemData reward, string fieldName, object value)
+        public static List<RewardItem> CreateMany(string prefix, int count)
         {
-            var field = typeof(RewardItemData).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-            field.SetValue(reward, value);
+            var result = new List<RewardItem>();
+
+            for (var i = 0; i < count; i++)
+            {
+                result.Add(new RewardItem(prefix + "_" + i, false));
+            }
+
+            return result;
         }
     }
 }

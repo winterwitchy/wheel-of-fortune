@@ -1,5 +1,3 @@
-using WheelGame.Data;
-
 namespace WheelGame.Core
 {
     public sealed class RewardVault : IRewardVault
@@ -13,7 +11,7 @@ namespace WheelGame.Core
             _inventory = inventory;
         }
 
-        public void Deposit(RewardItemData reward, int amount)
+        public void Deposit(RewardItem reward, int amount)
         {
             if (reward.IsCurrency)
             {

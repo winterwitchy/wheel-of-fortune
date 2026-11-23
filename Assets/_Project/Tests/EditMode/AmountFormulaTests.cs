@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using WheelGame.Data;
+using WheelGame.Core;
 
 namespace WheelGame.Tests.EditMode
 {
