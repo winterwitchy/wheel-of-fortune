@@ -14,7 +14,7 @@ namespace WheelGame.Data
         [Header("Rules")]
         [SerializeField] private LeaveRule _leaveRule = LeaveRule.AfterFirstReward;
 
-        [Header("Revive")]
+        [Header("Economy")]
         [SerializeField, Min(0)] private int _startingGold = 100;
         [SerializeField, Min(1)] private int _reviveBaseCost = 25;
         [SerializeField, Min(1f)] private float _reviveCostMultiplier = 2f;
@@ -41,6 +41,11 @@ namespace WheelGame.Data
 
             foreach (var error in _generation.GetValidationErrors())
                 Debug.LogWarning($"{name}: {error}", this);
+
+            if (_generation.GoldReward && !_generation.GoldReward.IsCurrency)
+            {
+                Debug.LogWarning($"{name}: the gold reward is used for revives and must be marked as a currency.", this);
+            }
 
             ValidateOverrides();
         }

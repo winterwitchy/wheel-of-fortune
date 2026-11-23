@@ -125,7 +125,7 @@ namespace WheelGame.Core
                 return false;
             }
 
-            return wallet.Gold >= ReviveCost;
+            return wallet.GetBalance(_revivePricing.CurrencyId) >= ReviveCost;
         }
 
         public bool TryRevive(IWallet wallet)
@@ -135,7 +135,7 @@ namespace WheelGame.Core
                 throw new InvalidOperationException($"Cannot revive while {State}.");
             }
 
-            if (!wallet.TrySpend(ReviveCost))
+            if (!wallet.TrySpend(_revivePricing.CurrencyId, ReviveCost))
             {
                 return false;
             }
@@ -145,13 +145,26 @@ namespace WheelGame.Core
             return true;
         }
 
-        public void Leave()
+        public void Leave(IRewardVault vault)
         {
             if (!CanLeave)
+            {
                 throw new InvalidOperationException($"Cannot leave while {State} at zone {CurrentZone}.");
+            }
+
+            var cashedOutRewards = new Dictionary<RewardItemData, int>(_collectedRewards);
+
+            foreach (var pair in cashedOutRewards)
+            {
+                vault.Deposit(pair.Key, pair.Value);
+            }
 
             SetState(SessionState.CashedOut);
-            CashedOut?.Invoke(new Dictionary<RewardItemData, int>(_collectedRewards));
+
+            if (CashedOut != null)
+            {
+                CashedOut.Invoke(cashedOutRewards);
+            }
         }
 
         private bool IsLeaveAllowedInCurrentZone()

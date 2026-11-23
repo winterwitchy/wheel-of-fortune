@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using WheelGame.Core;
 
@@ -5,32 +6,69 @@ namespace WheelGame.Tests.EditMode
 {
     public sealed class InMemoryWalletTests
     {
-        [Test]
-        public void TrySpend_WithEnoughGold_DeductsAndReturnsTrue()
-        {
-            var wallet = new InMemoryWallet(100);
+        private const string GOLD = "gold";
+        private const string CASH = "cash";
 
-            Assert.IsTrue(wallet.TrySpend(25));
-            Assert.AreEqual(75, wallet.Gold);
+        [Test]
+        public void Add_KeepsEveryCurrencySeparate()
+        {
+            var wallet = new InMemoryWallet();
+
+            wallet.Add(GOLD, 10);
+            wallet.Add(CASH, 500);
+            wallet.Add(GOLD, 5);
+
+            Assert.AreEqual(15, wallet.GetBalance(GOLD));
+            Assert.AreEqual(500, wallet.GetBalance(CASH));
+            Assert.AreEqual(0, wallet.GetBalance("gems"));
         }
 
         [Test]
-        public void TrySpend_WithoutEnoughGold_ReturnsFalseAndKeepsGold()
+        public void TrySpend_WithEnoughBalance_DeductsAndReturnsTrue()
         {
-            var wallet = new InMemoryWallet(10);
+            var wallet = new InMemoryWallet();
+            wallet.Add(GOLD, 100);
 
-            Assert.IsFalse(wallet.TrySpend(25));
-            Assert.AreEqual(10, wallet.Gold);
+            Assert.IsTrue(wallet.TrySpend(GOLD, 25));
+            Assert.AreEqual(75, wallet.GetBalance(GOLD));
         }
 
         [Test]
-        public void Add_IncreasesGold()
+        public void TrySpend_WithoutEnoughBalance_ReturnsFalseAndKeepsBalance()
         {
-            var wallet = new InMemoryWallet(10);
+            var wallet = new InMemoryWallet();
+            wallet.Add(GOLD, 10);
+            wallet.Add(CASH, 1000);
 
-            wallet.Add(40);
+            Assert.IsFalse(wallet.TrySpend(GOLD, 25));
+            Assert.AreEqual(10, wallet.GetBalance(GOLD));
+        }
 
-            Assert.AreEqual(50, wallet.Gold);
+        [Test]
+        public void Add_RaisesBalanceChangedWithTheNewBalance()
+        {
+            var wallet = new InMemoryWallet();
+            wallet.Add(GOLD, 10);
+            string changedId = null;
+            var changedBalance = 0;
+            wallet.BalanceChanged += (id, balance) =>
+            {
+                changedId = id;
+                changedBalance = balance;
+            };
+
+            wallet.Add(GOLD, 40);
+
+            Assert.AreEqual(GOLD, changedId);
+            Assert.AreEqual(50, changedBalance);
+        }
+
+        [Test]
+        public void Add_NegativeAmount_Throws()
+        {
+            var wallet = new InMemoryWallet();
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => wallet.Add(GOLD, -1));
         }
     }
 }

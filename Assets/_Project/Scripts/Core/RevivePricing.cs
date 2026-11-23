@@ -7,8 +7,13 @@ namespace WheelGame.Core
         private readonly int _baseCost;
         private readonly float _costMultiplier;
 
-        public RevivePricing(int baseCost, float costMultiplier)
+        public RevivePricing(string currencyId, int baseCost, float costMultiplier)
         {
+            if (string.IsNullOrEmpty(currencyId))
+            {
+                throw new ArgumentException("Revive currency id is missing.", nameof(currencyId));
+            }
+
             if (baseCost < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(baseCost), baseCost, "Revive base cost must be at least 1.");
@@ -19,9 +24,12 @@ namespace WheelGame.Core
                 throw new ArgumentOutOfRangeException(nameof(costMultiplier), costMultiplier, "Revive cost multiplier must be at least 1.");
             }
 
+            CurrencyId = currencyId;
             _baseCost = baseCost;
             _costMultiplier = costMultiplier;
         }
+
+        public string CurrencyId { get; }
 
         public int GetCost(int revivesUsed)
         {

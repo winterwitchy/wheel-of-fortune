@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: cash
   _icon: {fileID: 21300000, guid: 58563509d216e5b4586199f6740c25ab, type: 3}
+  _isCurrency: 1

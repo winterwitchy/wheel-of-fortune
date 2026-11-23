@@ -1,6 +1,5 @@
 using System;
 using NUnit.Framework;
-using UnityEngine;
 using WheelGame.Core;
 using WheelGame.Data;
 
@@ -13,15 +12,21 @@ namespace WheelGame.Tests.EditMode
         private const int RewardAmount = 10;
         private const int REVIVE_BASE_COST = 25;
         private const float REVIVE_COST_MULTIPLIER = 2f;
+        private const string GOLD = "gold";
+        private const int STARTING_GOLD = 1000;
 
         private RewardItemData _reward;
         private InMemoryWallet _wallet;
+        private InMemoryInventory _inventory;
+        private RewardVault _vault;
 
         [SetUp]
         public void SetUp()
         {
-            _reward = ScriptableObject.CreateInstance<RewardItemData>();
-            _wallet = new InMemoryWallet(1000);
+            _reward = TestRewards.Create("chest_small", false);
+            _wallet = CreateWallet(STARTING_GOLD);
+            _inventory = new InMemoryInventory();
+            _vault = new RewardVault(_wallet, _inventory);
         }
 
         [Test]
@@ -83,7 +88,8 @@ namespace WheelGame.Tests.EditMode
             session.StartRun();
 
             Assert.IsFalse(session.CanLeave);
-            Assert.Throws<InvalidOperationException>(() => session.Leave());
+            Assert.Throws<InvalidOperationException>(() => session.Leave(_vault));
+            Assert.AreEqual(0, _inventory.Items.Count);
         }
 
         [Test]
@@ -108,18 +114,18 @@ namespace WheelGame.Tests.EditMode
             for (var expectedCost = REVIVE_BASE_COST; expectedCost <= REVIVE_BASE_COST * 4; expectedCost *= 2)
             {
                 SpinAndComplete(session);
-                var goldBefore = _wallet.Gold;
+                var goldBefore = _wallet.GetBalance(GOLD);
 
                 Assert.AreEqual(expectedCost, session.ReviveCost);
                 Assert.IsTrue(session.TryRevive(_wallet));
-                Assert.AreEqual(goldBefore - expectedCost, _wallet.Gold);
+                Assert.AreEqual(goldBefore - expectedCost, _wallet.GetBalance(GOLD));
             }
         }
 
         [Test]
         public void TryRevive_WithoutEnoughGold_KeepsBombHitAndGold()
         {
-            var poorWallet = new InMemoryWallet(REVIVE_BASE_COST - 1);
+            var poorWallet = CreateWallet(REVIVE_BASE_COST - 1);
             var session = CreateSession(BombIndex);
             session.StartRun();
             SpinAndComplete(session);
@@ -127,7 +133,7 @@ namespace WheelGame.Tests.EditMode
             Assert.IsFalse(session.CanRevive(poorWallet));
             Assert.IsFalse(session.TryRevive(poorWallet));
             Assert.AreEqual(SessionState.BombHit, session.State);
-            Assert.AreEqual(REVIVE_BASE_COST - 1, poorWallet.Gold);
+            Assert.AreEqual(REVIVE_BASE_COST - 1, poorWallet.GetBalance(GOLD));
         }
 
         [Test]
@@ -138,7 +144,7 @@ namespace WheelGame.Tests.EditMode
 
             Assert.IsFalse(session.CanRevive(_wallet));
             Assert.Throws<InvalidOperationException>(() => session.TryRevive(_wallet));
-            Assert.AreEqual(1000, _wallet.Gold);
+            Assert.AreEqual(STARTING_GOLD, _wallet.GetBalance(GOLD));
         }
 
         [Test]
@@ -178,9 +184,38 @@ namespace WheelGame.Tests.EditMode
             session.StartRun();
             SpinAndComplete(session);
 
-            session.Leave();
+            session.Leave(_vault);
 
             Assert.AreEqual(SessionState.CashedOut, session.State);
+        }
+
+        [Test]
+        public void Leave_DepositsEveryCollectedRewardIntoTheVault()
+        {
+            var session = CreateSession(RewardIndex, RewardIndex, RewardIndex);
+            session.StartRun();
+
+            for (var i = 0; i < 3; i++)
+            {
+                SpinAndComplete(session);
+            }
+
+            session.Leave(_vault);
+
+            Assert.AreEqual(RewardAmount * 3, _inventory.GetCount("chest_small"));
+        }
+
+        [Test]
+        public void StartRun_AfterBombWithoutLeaving_DepositsNothing()
+        {
+            var session = CreateSession(RewardIndex, BombIndex);
+            session.StartRun();
+            SpinAndComplete(session);
+            SpinAndComplete(session);
+
+            session.StartRun();
+
+            Assert.AreEqual(0, _inventory.Items.Count);
         }
 
         [Test]
@@ -232,8 +267,15 @@ namespace WheelGame.Tests.EditMode
                 new ZoneRules(5, 30),
                 new FixedWheelGenerator(_reward, RewardAmount, BombIndex),
                 leaveRule,
-                new RevivePricing(REVIVE_BASE_COST, REVIVE_COST_MULTIPLIER),
+                new RevivePricing(GOLD, REVIVE_BASE_COST, REVIVE_COST_MULTIPLIER),
                 new FakeRandomProvider(spinIndices));
+        }
+
+        private static InMemoryWallet CreateWallet(int gold)
+        {
+            var wallet = new InMemoryWallet();
+            wallet.Add(GOLD, gold);
+            return wallet;
         }
 
         private static void SpinAndComplete(WheelSession session)

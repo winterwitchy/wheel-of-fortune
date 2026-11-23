@@ -1,4 +1,3 @@
-using System.IO.Enumeration;
 using UnityEngine;
 
 namespace WheelGame.Data
@@ -8,8 +7,14 @@ namespace WheelGame.Data
     {
         [SerializeField] private string _id;
         [SerializeField] private Sprite _icon;
+        [SerializeField] private bool _isCurrency;
 
         public string Id => _id;
         public Sprite Icon => _icon;
+
+        public bool IsCurrency
+        {
+            get { return _isCurrency; }
+        }
     }
 }

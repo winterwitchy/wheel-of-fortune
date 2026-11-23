@@ -10,7 +10,8 @@ namespace WheelGame.Presentation
     {
         private readonly WheelSession _session;
         private readonly IWallet _wallet;
-        private readonly RewardItemData _goldReward;
+        private readonly IRewardVault _vault;
+        private readonly string _goldId;
         private readonly GoldView _goldView;
         private readonly ZoneInfoView _zoneInfoView;
         private readonly WheelView _wheelView;
@@ -20,13 +21,14 @@ namespace WheelGame.Presentation
         private readonly CashOutPopupView _cashOutPopupView;
 
         public GamePresenter(
-            WheelSession session, IWallet wallet, RewardItemData goldReward,
+            WheelSession session, IWallet wallet, IRewardVault vault, string goldId,
             GoldView goldView, ZoneInfoView zoneInfoView, WheelView wheelView, WheelEffectsView wheelEffectsView,
             RewardsPanelView rewardsPanelView, BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
             _session = session;
             _wallet = wallet;
-            _goldReward = goldReward;
+            _vault = vault;
+            _goldId = goldId;
             _goldView = goldView;
             _zoneInfoView = zoneInfoView;
             _wheelView = wheelView;
@@ -48,8 +50,9 @@ namespace WheelGame.Presentation
             _bombPopupView.GiveUpClicked += HandleGiveUpClicked;
             _bombPopupView.ReviveClicked += HandleReviveClicked;
             _cashOutPopupView.ContinueClicked += HandleContinueClicked;
+            _wallet.BalanceChanged += HandleBalanceChanged;
 
-            _goldView.Show(_wallet.Gold);
+            _goldView.Show(_wallet.GetBalance(_goldId));
             _session.StartRun();
         }
 
@@ -65,6 +68,7 @@ namespace WheelGame.Presentation
             _bombPopupView.GiveUpClicked -= HandleGiveUpClicked;
             _bombPopupView.ReviveClicked -= HandleReviveClicked;
             _cashOutPopupView.ContinueClicked -= HandleContinueClicked;
+            _wallet.BalanceChanged -= HandleBalanceChanged;
         }
 
         private void HandleSpinClicked()
@@ -76,7 +80,9 @@ namespace WheelGame.Presentation
         private void HandleLeaveClicked()
         {
             if (_session.CanLeave)
-                _session.Leave();
+            {
+                _session.Leave(_vault);
+            }
         }
 
         private void HandleSpinStarted(SpinResult result)
@@ -122,19 +128,20 @@ namespace WheelGame.Presentation
                 return;
             }
 
-            _goldView.Show(_wallet.Gold);
             _bombPopupView.Close();
         }
 
         private void HandleCashedOut(IReadOnlyDictionary<RewardItemData, int> rewards)
         {
-            if (rewards.TryGetValue(_goldReward, out var collectedGold))
-            {
-                _wallet.Add(collectedGold);
-                _goldView.Show(_wallet.Gold);
-            }
-
             _cashOutPopupView.Show(rewards);
+        }
+
+        private void HandleBalanceChanged(string currencyId, int balance)
+        {
+            if (currencyId == _goldId)
+            {
+                _goldView.Show(balance);
+            }
         }
 
         private void HandleContinueClicked()
