@@ -6,6 +6,8 @@ namespace WheelGame.Data
 {
     public abstract class RewardPoolDefinition : ScriptableObject
     {
+        #region Public Methods
+
         public abstract IRewardSource CreateSource(CoreModelFactory factory);
 
         public virtual void LinkSource(IRewardSource source, CoreModelFactory factory)
@@ -13,6 +15,10 @@ namespace WheelGame.Data
         }
 
         public abstract void CollectValidationErrors(List<string> errors);
+
+        #endregion
+
+        #region Private Methods
 
         protected void CollectItemErrors(IReadOnlyList<RewardItemData> items, List<string> errors)
         {
@@ -36,5 +42,7 @@ namespace WheelGame.Data
                 }
             }
         }
+
+        #endregion
     }
 }

@@ -4,6 +4,8 @@ namespace WheelGame.Core
 {
     public sealed class SliceRule
     {
+        #region Constructors
+
         public SliceRule(IRewardSource source, int count)
         {
             if (source == null)
@@ -20,8 +22,14 @@ namespace WheelGame.Core
             Count = count;
         }
 
+        #endregion
+
+        #region Properties
+
         public IRewardSource Source { get; }
 
         public int Count { get; }
+
+        #endregion
     }
 }

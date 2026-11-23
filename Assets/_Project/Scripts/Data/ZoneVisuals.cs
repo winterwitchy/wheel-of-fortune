@@ -6,6 +6,8 @@ namespace WheelGame.Data
     [Serializable]
     public sealed class ZoneVisuals
     {
+        #region Serialized Fields
+
         [Header("Wheel")]
         [SerializeField] private string _title;
         [SerializeField] private Color _titleColor = Color.white;
@@ -22,6 +24,10 @@ namespace WheelGame.Data
         [SerializeField] private Color _numberColor = Color.white;
         [SerializeField] private Sprite _currentZoneSprite;
         [SerializeField] private Color _currentZoneTint = Color.white;
+
+        #endregion
+
+        #region Properties
 
         public string Title
         {
@@ -77,5 +83,7 @@ namespace WheelGame.Data
         {
             get { return _currentZoneTint; }
         }
+
+        #endregion
     }
 }

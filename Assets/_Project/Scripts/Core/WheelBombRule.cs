@@ -4,14 +4,28 @@ namespace WheelGame.Core
 {
     public sealed class WheelBombRule
     {
+        #region Constants
+
         public const int UNALTERED = -1;
 
+        #endregion
+
+        #region Fields
+
         private readonly IRandomProvider _random;
+
+        #endregion
+
+        #region Constructors
 
         public WheelBombRule(IRandomProvider random)
         {
             _random = random;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public static int GetRequiredBombCount(ZoneKind zoneKind)
         {
@@ -53,6 +67,10 @@ namespace WheelGame.Core
                 }
             }
         }
+
+        #endregion
+
+        #region Private Methods
 
         private static List<int> FindBombIndices(IReadOnlyList<WheelSliceEntry> slices)
         {
@@ -160,5 +178,7 @@ namespace WheelGame.Core
 
             return !slices[index].IsBomb;
         }
+
+        #endregion
     }
 }

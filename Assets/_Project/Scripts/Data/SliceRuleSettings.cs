@@ -6,8 +6,14 @@ namespace WheelGame.Data
     [Serializable]
     public sealed class SliceRuleSettings
     {
+        #region Serialized Fields
+
         [SerializeField] private RewardPoolDefinition _pool;
         [SerializeField, Min(0)] private int _count = 1;
+
+        #endregion
+
+        #region Properties
 
         public RewardPoolDefinition Pool
         {
@@ -18,5 +24,7 @@ namespace WheelGame.Data
         {
             get { return _count; }
         }
+
+        #endregion
     }
 }

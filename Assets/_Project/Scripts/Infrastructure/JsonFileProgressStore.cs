@@ -7,12 +7,22 @@ namespace WheelGame.Infrastructure
 {
     public sealed class JsonFileProgressStore : IProgressStore
     {
+        #region Fields
+
         private readonly string _path;
+
+        #endregion
+
+        #region Constructors
 
         public JsonFileProgressStore(string path)
         {
             _path = path;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public bool TryLoad(out ProgressData data)
         {
@@ -55,5 +65,7 @@ namespace WheelGame.Infrastructure
                 Debug.LogWarning($"Could not save progress to {_path}: {exception.Message}");
             }
         }
+
+        #endregion
     }
 }

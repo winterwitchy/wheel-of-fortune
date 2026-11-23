@@ -7,11 +7,17 @@ namespace WheelGame.Views
 {
     public sealed class RewardCellPool
     {
+        #region Fields
+
         private readonly RewardCellView _prefab;
         private readonly RectTransform _container;
         private readonly string _nameFormat;
         private readonly List<RewardCellView> _cells = new List<RewardCellView>();
         private readonly Dictionary<RewardItem, RewardCellView> _activeCells = new Dictionary<RewardItem, RewardCellView>();
+
+        #endregion
+
+        #region Constructors
 
         public RewardCellPool(RewardCellView prefab, RectTransform container, string nameFormat)
         {
@@ -19,6 +25,10 @@ namespace WheelGame.Views
             _container = container;
             _nameFormat = nameFormat;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public bool TryGet(RewardItem reward, out RewardCellView cell)
         {
@@ -49,6 +59,10 @@ namespace WheelGame.Views
             _activeCells.Clear();
         }
 
+        #endregion
+
+        #region Private Methods
+
         private RewardCellView TakeInactiveCell()
         {
             foreach (var cell in _cells)
@@ -64,5 +78,7 @@ namespace WheelGame.Views
             _cells.Add(created);
             return created;
         }
+
+        #endregion
     }
 }

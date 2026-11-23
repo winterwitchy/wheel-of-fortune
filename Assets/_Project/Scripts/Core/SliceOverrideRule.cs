@@ -4,6 +4,8 @@ namespace WheelGame.Core
 {
     public sealed class SliceOverrideRule
     {
+        #region Constructors
+
         private SliceOverrideRule(int zone, int sliceIndex, bool isBomb, RewardItem reward, int amount)
         {
             Zone = zone;
@@ -12,6 +14,10 @@ namespace WheelGame.Core
             Reward = reward;
             Amount = amount;
         }
+
+        #endregion
+
+        #region Properties
 
         public int Zone { get; }
 
@@ -22,6 +28,10 @@ namespace WheelGame.Core
         public RewardItem Reward { get; }
 
         public int Amount { get; }
+
+        #endregion
+
+        #region Public Methods
 
         public static SliceOverrideRule CreateBomb(int zone, int sliceIndex)
         {
@@ -52,5 +62,7 @@ namespace WheelGame.Core
 
             return WheelSliceEntry.CreateReward(Reward, Amount);
         }
+
+        #endregion
     }
 }

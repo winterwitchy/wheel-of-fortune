@@ -5,16 +5,22 @@ namespace WheelGame.Views
 {
     public static class ButtonLookup
     {
+        #region Public Methods
+
         public static Button FindInChildren(Component root, string buttonName)
         {
             foreach (var button in root.GetComponentsInChildren<Button>(true))
             {
                 if (button.name == buttonName)
+                {
                     return button;
+                }
             }
 
             Debug.LogWarning($"{root.name}: button '{buttonName}' not found.", root);
             return null;
         }
+
+        #endregion
     }
 }

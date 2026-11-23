@@ -4,8 +4,14 @@ namespace WheelGame.Core
 {
     public sealed class RevivePricing
     {
+        #region Fields
+
         private readonly int _baseCost;
         private readonly float _costMultiplier;
+
+        #endregion
+
+        #region Constructors
 
         public RevivePricing(string currencyId, int baseCost, float costMultiplier)
         {
@@ -29,7 +35,15 @@ namespace WheelGame.Core
             _costMultiplier = costMultiplier;
         }
 
+        #endregion
+
+        #region Properties
+
         public string CurrencyId { get; }
+
+        #endregion
+
+        #region Public Methods
 
         public int GetCost(int revivesUsed)
         {
@@ -42,5 +56,7 @@ namespace WheelGame.Core
 
             return (int)Math.Round(cost, MidpointRounding.AwayFromZero);
         }
+
+        #endregion
     }
 }

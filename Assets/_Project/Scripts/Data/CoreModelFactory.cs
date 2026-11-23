@@ -5,13 +5,23 @@ namespace WheelGame.Data
 {
     public sealed class CoreModelFactory
     {
+        #region Fields
+
         private readonly Dictionary<RewardItemData, RewardItem> _rewards = new Dictionary<RewardItemData, RewardItem>();
         private readonly Dictionary<RewardPoolDefinition, IRewardSource> _sources = new Dictionary<RewardPoolDefinition, IRewardSource>();
+
+        #endregion
+
+        #region Properties
 
         public IReadOnlyCollection<RewardItemData> KnownRewards
         {
             get { return _rewards.Keys; }
         }
+
+        #endregion
+
+        #region Public Methods
 
         public RewardItem GetReward(RewardItemData data)
         {
@@ -136,5 +146,7 @@ namespace WheelGame.Data
 
             return result;
         }
+
+        #endregion
     }
 }

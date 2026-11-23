@@ -6,6 +6,8 @@ namespace WheelGame.Data
     [CreateAssetMenu(fileName = "zone_", menuName = "WheelGame/Zone Definition")]
     public sealed class ZoneDefinition : ScriptableObject
     {
+        #region Serialized Fields
+
         [Header("Rules")]
         [SerializeField] private string _id;
         [SerializeField, Min(1)] private int _interval = 1;
@@ -20,6 +22,10 @@ namespace WheelGame.Data
 
         [Header("Visuals")]
         [SerializeField] private ZoneVisuals _visuals = new ZoneVisuals();
+
+        #endregion
+
+        #region Properties
 
         public string Id
         {
@@ -65,5 +71,7 @@ namespace WheelGame.Data
         {
             get { return _visuals; }
         }
+
+        #endregion
     }
 }

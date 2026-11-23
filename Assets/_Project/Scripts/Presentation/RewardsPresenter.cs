@@ -6,15 +6,20 @@ namespace WheelGame.Presentation
 {
     public sealed class RewardsPresenter : IPresenter
     {
+        #region Fields
+
         private readonly IEventBus _bus;
         private readonly WheelSession _session;
         private readonly IRewardIconProvider _icons;
         private readonly IRewardsPanelView _panel;
         private readonly IRewardClaimView _claim;
         private readonly IWheelView _wheel;
-
         private RewardItem _claimedReward;
         private int _claimedTotal;
+
+        #endregion
+
+        #region Constructors
 
         public RewardsPresenter(IEventBus bus, WheelSession session, IRewardIconProvider icons, IRewardsPanelView panel, IRewardClaimView claim, IWheelView wheel)
         {
@@ -25,6 +30,10 @@ namespace WheelGame.Presentation
             _claim = claim;
             _wheel = wheel;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Initialize()
         {
@@ -41,6 +50,10 @@ namespace WheelGame.Presentation
             _bus.Unsubscribe<RewardCollectedEvent>(HandleRewardCollected);
             _bus.Unsubscribe<ClaimAnimationFinishedEvent>(HandleClaimFinished);
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void HandleRunStarted(RunStartedEvent message)
         {
@@ -75,5 +88,7 @@ namespace WheelGame.Presentation
                 _session.FinishCollecting();
             }
         }
+
+        #endregion
     }
 }

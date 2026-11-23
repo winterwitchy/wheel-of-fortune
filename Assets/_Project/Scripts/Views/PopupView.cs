@@ -6,10 +6,16 @@ namespace WheelGame.Views
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class PopupView : MonoBehaviour
     {
+        #region Serialized Fields
+
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _card;
         [SerializeField, Min(0f)] private float _duration = 0.25f;
         [SerializeField, Range(0f, 1f)] private float _openScale = 0.85f;
+
+        #endregion
+
+        #region Public Methods
 
         public void Close()
         {
@@ -22,6 +28,10 @@ namespace WheelGame.Views
                 .SetLink(gameObject)
                 .OnComplete(HandleFadedOut);
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void HandleFadedOut()
         {
@@ -50,11 +60,17 @@ namespace WheelGame.Views
             _canvasGroup.blocksRaycasts = interactive;
         }
 
+        #endregion
+
+        #region Editor
+
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
         }
 #endif
+
+        #endregion
     }
 }

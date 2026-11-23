@@ -6,9 +6,15 @@ namespace WheelGame.Data
     [CreateAssetMenu(fileName = "reward_", menuName = "WheelGame/Reward Item")]
     public sealed class RewardItemData : ScriptableObject
     {
+        #region Serialized Fields
+
         [SerializeField] private string _id;
         [SerializeField] private AssetReferenceAtlasedSprite _icon;
         [SerializeField] private bool _isCurrency;
+
+        #endregion
+
+        #region Properties
 
         public string Id
         {
@@ -42,5 +48,7 @@ namespace WheelGame.Data
                 return _icon.RuntimeKeyIsValid();
             }
         }
+
+        #endregion
     }
 }

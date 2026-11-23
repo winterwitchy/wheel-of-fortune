@@ -7,11 +7,17 @@ namespace WheelGame.Presentation
 {
     public sealed class WheelPresenter : IPresenter
     {
+        #region Fields
+
         private readonly IEventBus _bus;
         private readonly WheelSession _session;
         private readonly ZoneCatalog _zones;
         private readonly IWheelView _wheel;
         private readonly IWheelEffectsView _effects;
+
+        #endregion
+
+        #region Constructors
 
         public WheelPresenter(IEventBus bus, WheelSession session, ZoneCatalog zones, IWheelView wheel, IWheelEffectsView effects)
         {
@@ -21,6 +27,10 @@ namespace WheelGame.Presentation
             _wheel = wheel;
             _effects = effects;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Initialize()
         {
@@ -41,6 +51,10 @@ namespace WheelGame.Presentation
             _bus.Unsubscribe<SpinAnimationFinishedEvent>(HandleSpinAnimationFinished);
             _bus.Unsubscribe<BombHitEvent>(HandleBombHit);
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void HandleStateChanged(SessionStateChangedEvent message)
         {
@@ -79,5 +93,7 @@ namespace WheelGame.Presentation
         {
             _effects.PlayBomb();
         }
+
+        #endregion
     }
 }

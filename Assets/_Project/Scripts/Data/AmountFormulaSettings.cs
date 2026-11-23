@@ -7,14 +7,22 @@ namespace WheelGame.Data
     [Serializable]
     public sealed class AmountFormulaSettings
     {
+        #region Serialized Fields
+
         [SerializeField] private GrowthCurve _growth = GrowthCurve.Linear;
         [SerializeField, Min(1)] private int _divisor = 1;
         [SerializeField, Min(0)] private int _offset;
         [SerializeField, Min(1)] private int _step = 1;
 
+        #endregion
+
+        #region Public Methods
+
         public AmountFormula ToFormula()
         {
             return new AmountFormula(_growth, Mathf.Max(1, _divisor), Mathf.Max(0, _offset), Mathf.Max(1, _step));
         }
+
+        #endregion
     }
 }

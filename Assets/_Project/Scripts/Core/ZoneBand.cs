@@ -5,6 +5,8 @@ namespace WheelGame.Core
 {
     public sealed class ZoneBand
     {
+        #region Constructors
+
         public ZoneBand(int firstZone, IReadOnlyList<SliceRule> composition)
         {
             if (firstZone < 1)
@@ -16,8 +18,14 @@ namespace WheelGame.Core
             Composition = composition;
         }
 
+        #endregion
+
+        #region Properties
+
         public int FirstZone { get; }
 
         public IReadOnlyList<SliceRule> Composition { get; }
+
+        #endregion
     }
 }

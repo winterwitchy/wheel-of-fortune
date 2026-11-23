@@ -5,6 +5,8 @@ namespace WheelGame.Core
 {
     public sealed class ZoneKind
     {
+        #region Constructors
+
         public ZoneKind(string id, int interval, int priority, bool hasBomb, int multiplier, IRewardSource bombSlotSource, IReadOnlyList<SliceRule> composition)
         {
             if (string.IsNullOrEmpty(id))
@@ -31,6 +33,10 @@ namespace WheelGame.Core
             Composition = composition;
         }
 
+        #endregion
+
+        #region Properties
+
         public string Id { get; }
 
         public int Interval { get; }
@@ -50,9 +56,15 @@ namespace WheelGame.Core
             get { return Composition != null; }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public bool Matches(int zone)
         {
             return zone % Interval == 0;
         }
+
+        #endregion
     }
 }

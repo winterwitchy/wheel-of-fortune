@@ -8,6 +8,8 @@ namespace WheelGame.Views
 {
     public sealed class WheelEffectsView : MonoBehaviour, IWheelEffectsView
     {
+        #region Serialized Fields
+
         [Header("References")]
         [SerializeField] private RectTransform _effectsRoot;
         [SerializeField] private Image _glow;
@@ -31,11 +33,19 @@ namespace WheelGame.Views
         [SerializeField, Range(0f, 1f)] private float _glowFlashRatio = 0.5f;
         [SerializeField] private Color _bombGlowColor = Color.red;
 
+        #endregion
+
+        #region Fields
+
         private Tween _pulseTween;
         private Tween _raysTween;
         private Tween _bombTween;
         private bool _isBombPending;
         private IEventBus _bus;
+
+        #endregion
+
+        #region Public Methods
 
         public void Construct(IEventBus bus)
         {
@@ -69,18 +79,9 @@ namespace WheelGame.Views
                 .OnKill(HandleBombTweenFinished);
         }
 
-        private void HandleBombTweenFinished()
-        {
-            _bombTween = null;
+        #endregion
 
-            if (!_isBombPending)
-            {
-                return;
-            }
-
-            _isBombPending = false;
-            _bus.Publish(new BombEffectFinishedEvent());
-        }
+        #region Unity Callbacks
 
         private void OnEnable()
         {
@@ -97,13 +98,41 @@ namespace WheelGame.Views
         {
             _isBombPending = false;
 
-            _pulseTween?.Kill();
-            _raysTween?.Kill();
+            if (_pulseTween != null)
+            {
+                _pulseTween.Kill();
+            }
+
+            if (_raysTween != null)
+            {
+                _raysTween.Kill();
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void HandleBombTweenFinished()
+        {
+            _bombTween = null;
+
+            if (!_isBombPending)
+            {
+                return;
+            }
+
+            _isBombPending = false;
+            _bus.Publish(new BombEffectFinishedEvent());
         }
 
         private void StartRaysRotation(float secondsPerTurn)
         {
-            _raysTween?.Kill();
+            if (_raysTween != null)
+            {
+                _raysTween.Kill();
+            }
+
             _raysTween = _rays.rectTransform
                 .DOLocalRotate(new Vector3(0f, 0f, -360f), secondsPerTurn, RotateMode.FastBeyond360)
                 .SetRelative(true)
@@ -111,5 +140,7 @@ namespace WheelGame.Views
                 .SetLoops(-1, LoopType.Incremental)
                 .SetLink(gameObject);
         }
+
+        #endregion
     }
 }

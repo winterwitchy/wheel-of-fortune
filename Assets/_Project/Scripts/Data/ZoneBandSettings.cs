@@ -7,8 +7,14 @@ namespace WheelGame.Data
     [Serializable]
     public sealed class ZoneBandSettings
     {
+        #region Serialized Fields
+
         [SerializeField, Min(1)] private int _firstZone = 1;
         [SerializeField] private List<SliceRuleSettings> _slices = new List<SliceRuleSettings>();
+
+        #endregion
+
+        #region Properties
 
         public int FirstZone
         {
@@ -19,5 +25,7 @@ namespace WheelGame.Data
         {
             get { return _slices; }
         }
+
+        #endregion
     }
 }

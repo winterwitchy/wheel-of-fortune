@@ -4,9 +4,15 @@ namespace WheelGame.Core
 {
     public sealed class OverriddenWheelGenerator : IWheelGenerator
     {
+        #region Fields
+
         private readonly IWheelGenerator _inner;
         private readonly IReadOnlyList<SliceOverrideRule> _overrides;
         private readonly WheelBombRule _bombRule;
+
+        #endregion
+
+        #region Constructors
 
         public OverriddenWheelGenerator(IWheelGenerator inner, IReadOnlyList<SliceOverrideRule> overrides, WheelBombRule bombRule)
         {
@@ -14,6 +20,10 @@ namespace WheelGame.Core
             _overrides = overrides;
             _bombRule = bombRule;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public IReadOnlyList<WheelSliceEntry> Generate(int zone, ZoneKind zoneKind)
         {
@@ -26,6 +36,10 @@ namespace WheelGame.Core
 
             return slices;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void ApplyOverrides(int zone, ZoneKind zoneKind, List<WheelSliceEntry> slices, int[] alterationOrder)
         {
@@ -75,5 +89,7 @@ namespace WheelGame.Core
 
             return result;
         }
+
+        #endregion
     }
 }

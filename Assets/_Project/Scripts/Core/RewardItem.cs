@@ -4,6 +4,8 @@ namespace WheelGame.Core
 {
     public sealed class RewardItem : IEquatable<RewardItem>
     {
+        #region Constructors
+
         public RewardItem(string id, bool isCurrency)
         {
             if (string.IsNullOrEmpty(id))
@@ -15,9 +17,17 @@ namespace WheelGame.Core
             IsCurrency = isCurrency;
         }
 
+        #endregion
+
+        #region Properties
+
         public string Id { get; }
 
         public bool IsCurrency { get; }
+
+        #endregion
+
+        #region Public Methods
 
         public bool Equals(RewardItem other)
         {
@@ -43,5 +53,7 @@ namespace WheelGame.Core
         {
             return Id;
         }
+
+        #endregion
     }
 }

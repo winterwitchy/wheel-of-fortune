@@ -7,11 +7,17 @@ namespace WheelGame.Data
     [CreateAssetMenu(fileName = "pool_", menuName = "WheelGame/Reward Pools/Item Pool")]
     public sealed class ItemPoolDefinition : RewardPoolDefinition
     {
+        #region Serialized Fields
+
         [SerializeField] private List<RewardItemData> _items = new List<RewardItemData>();
         [SerializeField] private bool _hasAmountFormula = true;
         [SerializeField] private AmountFormulaSettings _amountFormula = new AmountFormulaSettings();
         [SerializeField] private bool _isUniquePerWheel;
         [SerializeField] private RewardPoolDefinition _fallbackPool;
+
+        #endregion
+
+        #region Public Methods
 
         public override IRewardSource CreateSource(CoreModelFactory factory)
         {
@@ -49,5 +55,7 @@ namespace WheelGame.Data
                 errors.Add($"{name} uses itself as its fallback pool.");
             }
         }
+
+        #endregion
     }
 }

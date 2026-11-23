@@ -8,17 +8,31 @@ namespace WheelGame.Views
 {
     public sealed class CashOutPopupView : PopupView, ICashOutPopupView
     {
-        private const string ContinueButtonName = "ui_button_popup_cashout_continue";
+        #region Constants
+
+        private const string CONTINUE_BUTTON_NAME = "ui_button_popup_cashout_continue";
         private const string CELL_NAME_FORMAT = "ui_rect_popup_cashout_cell_{0}";
+
+        #endregion
+
+        #region Serialized Fields
 
         [SerializeField] private RectTransform _cellContainer;
         [SerializeField] private RewardCellView _cellPrefab;
         [SerializeField] private GameObject _emptyState;
         [SerializeField] private Button _continueButton;
 
+        #endregion
+
+        #region Fields
+
         private RewardCellPool _cells;
         private IRewardIconProvider _icons;
         private IEventBus _bus;
+
+        #endregion
+
+        #region Public Methods
 
         public void Construct(IEventBus bus, IRewardIconProvider icons)
         {
@@ -44,6 +58,10 @@ namespace WheelGame.Views
             Open();
         }
 
+        #endregion
+
+        #region Unity Callbacks
+
         private void OnEnable()
         {
             _continueButton.onClick.AddListener(HandleContinueClicked);
@@ -54,17 +72,27 @@ namespace WheelGame.Views
             _continueButton.onClick.RemoveListener(HandleContinueClicked);
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void HandleContinueClicked()
         {
             _bus.Publish(new ContinueRequestedEvent());
         }
 
+        #endregion
+
+        #region Editor
+
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
-            _continueButton = ButtonLookup.FindInChildren(this, ContinueButtonName);
+            _continueButton = ButtonLookup.FindInChildren(this, CONTINUE_BUTTON_NAME);
         }
 #endif
+
+        #endregion
     }
 }

@@ -4,13 +4,23 @@ namespace WheelGame.Core
 {
     public sealed class WheelDraft
     {
+        #region Fields
+
         private readonly Dictionary<RewardItem, int> _occurrences = new Dictionary<RewardItem, int>();
         private readonly List<WheelSliceEntry> _slices = new List<WheelSliceEntry>(WheelLayout.SLICE_COUNT);
+
+        #endregion
+
+        #region Properties
 
         public List<WheelSliceEntry> Slices
         {
             get { return _slices; }
         }
+
+        #endregion
+
+        #region Public Methods
 
         public bool HasUsed(RewardItem reward)
         {
@@ -43,5 +53,7 @@ namespace WheelGame.Core
 
             return result;
         }
+
+        #endregion
     }
 }

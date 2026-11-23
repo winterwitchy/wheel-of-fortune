@@ -6,12 +6,18 @@ namespace WheelGame.Presentation
 {
     public sealed class PopupsPresenter : IPresenter
     {
+        #region Fields
+
         private readonly IEventBus _bus;
         private readonly WheelSession _session;
         private readonly IWallet _wallet;
         private readonly IRewardVault _vault;
         private readonly IBombPopupView _bombPopup;
         private readonly ICashOutPopupView _cashOutPopup;
+
+        #endregion
+
+        #region Constructors
 
         public PopupsPresenter(IEventBus bus, WheelSession session, IWallet wallet, IRewardVault vault, IBombPopupView bombPopup, ICashOutPopupView cashOutPopup)
         {
@@ -22,6 +28,10 @@ namespace WheelGame.Presentation
             _bombPopup = bombPopup;
             _cashOutPopup = cashOutPopup;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Initialize()
         {
@@ -42,6 +52,10 @@ namespace WheelGame.Presentation
             _bus.Unsubscribe<CashedOutEvent>(HandleCashedOut);
             _bus.Unsubscribe<ContinueRequestedEvent>(HandleContinueRequested);
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void HandleBombEffectFinished(BombEffectFinishedEvent message)
         {
@@ -85,5 +99,7 @@ namespace WheelGame.Presentation
             _cashOutPopup.Close();
             _session.StartRun();
         }
+
+        #endregion
     }
 }

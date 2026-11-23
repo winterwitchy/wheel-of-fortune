@@ -11,8 +11,14 @@ namespace WheelGame.Infrastructure
 {
     public sealed class AddressableIconProvider : IRewardIconProvider, IDisposable
     {
+        #region Fields
+
         private readonly Dictionary<string, Sprite> _icons = new Dictionary<string, Sprite>();
         private readonly List<AsyncOperationHandle<Sprite>> _handles = new List<AsyncOperationHandle<Sprite>>();
+
+        #endregion
+
+        #region Public Methods
 
         public IEnumerator Load(IEnumerable<RewardItemData> rewards)
         {
@@ -70,5 +76,7 @@ namespace WheelGame.Infrastructure
             _handles.Clear();
             _icons.Clear();
         }
+
+        #endregion
     }
 }

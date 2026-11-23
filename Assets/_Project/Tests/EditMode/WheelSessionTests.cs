@@ -7,9 +7,9 @@ namespace WheelGame.Tests.EditMode
 {
     public sealed class WheelSessionTests
     {
-        private const int BombIndex = 0;
-        private const int RewardIndex = 1;
-        private const int RewardAmount = 10;
+        private const int BOMB_INDEX = 0;
+        private const int REWARD_INDEX = 1;
+        private const int REWARD_AMOUNT = 10;
         private const int REVIVE_BASE_COST = 25;
         private const float REVIVE_COST_MULTIPLIER = 2f;
         private const string GOLD = "gold";
@@ -46,7 +46,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void CompleteSpin_OnReward_CollectsRewardAndWaitsForTheClaim()
         {
-            var session = CreateSession(RewardIndex);
+            var session = CreateSession(REWARD_INDEX);
             session.StartRun();
             session.Spin();
 
@@ -54,7 +54,7 @@ namespace WheelGame.Tests.EditMode
 
             Assert.AreEqual(SessionState.CollectingReward, session.State);
             Assert.AreEqual(1, session.CurrentZone);
-            Assert.AreEqual(RewardAmount, session.CollectedRewards[_reward]);
+            Assert.AreEqual(REWARD_AMOUNT, session.CollectedRewards[_reward]);
             Assert.IsFalse(session.CanSpin);
             Assert.IsFalse(session.CanLeave);
         }
@@ -62,7 +62,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void FinishCollecting_AdvancesToTheNextZone()
         {
-            var session = CreateSession(RewardIndex);
+            var session = CreateSession(REWARD_INDEX);
             session.StartRun();
             session.Spin();
             session.CompleteSpin();
@@ -98,7 +98,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void CompleteSpin_OnBomb_EntersBombHit()
         {
-            var session = CreateSession(BombIndex);
+            var session = CreateSession(BOMB_INDEX);
             session.StartRun();
 
             SpinAndComplete(session);
@@ -111,7 +111,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Revive_AfterBomb_KeepsZoneAndRewards()
         {
-            var session = CreateSession(RewardIndex, BombIndex);
+            var session = CreateSession(REWARD_INDEX, BOMB_INDEX);
             session.StartRun();
             SpinAndComplete(session);
             SpinAndComplete(session);
@@ -120,7 +120,7 @@ namespace WheelGame.Tests.EditMode
 
             Assert.AreEqual(SessionState.ReadyToSpin, session.State);
             Assert.AreEqual(2, session.CurrentZone);
-            Assert.AreEqual(RewardAmount, session.CollectedRewards[_reward]);
+            Assert.AreEqual(REWARD_AMOUNT, session.CollectedRewards[_reward]);
         }
 
         [Test]
@@ -137,7 +137,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void CanLeave_AfterRevivingWithoutRewards_IsFalse()
         {
-            var session = CreateSession(BombIndex);
+            var session = CreateSession(BOMB_INDEX);
             session.StartRun();
             SpinAndComplete(session);
 
@@ -150,7 +150,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void TryRevive_IncreasesCostOnEveryUse()
         {
-            var session = CreateSession(BombIndex, BombIndex, BombIndex);
+            var session = CreateSession(BOMB_INDEX, BOMB_INDEX, BOMB_INDEX);
             session.StartRun();
 
             for (var expectedCost = REVIVE_BASE_COST; expectedCost <= REVIVE_BASE_COST * 4; expectedCost *= 2)
@@ -168,7 +168,7 @@ namespace WheelGame.Tests.EditMode
         public void TryRevive_WithoutEnoughGold_KeepsBombHitAndGold()
         {
             var poorWallet = CreateWallet(REVIVE_BASE_COST - 1);
-            var session = CreateSession(BombIndex);
+            var session = CreateSession(BOMB_INDEX);
             session.StartRun();
             SpinAndComplete(session);
 
@@ -192,7 +192,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void StartRun_ResetsReviveCost()
         {
-            var session = CreateSession(BombIndex);
+            var session = CreateSession(BOMB_INDEX);
             session.StartRun();
             SpinAndComplete(session);
             session.TryRevive(_wallet);
@@ -205,7 +205,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void CanLeave_AfterFirstReward_ClosesDuringSpinAndReopensInNextZone()
         {
-            var session = CreateSession(LeaveRule.AfterFirstReward, RewardIndex, RewardIndex);
+            var session = CreateSession(LeaveRule.AfterFirstReward, REWARD_INDEX, REWARD_INDEX);
             session.StartRun();
             SpinAndComplete(session);
 
@@ -225,7 +225,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Leave_AfterFirstReward_CashesOut()
         {
-            var session = CreateSession(RewardIndex);
+            var session = CreateSession(REWARD_INDEX);
             session.StartRun();
             SpinAndComplete(session);
 
@@ -237,7 +237,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Leave_DepositsEveryCollectedRewardIntoTheVault()
         {
-            var session = CreateSession(RewardIndex, RewardIndex, RewardIndex);
+            var session = CreateSession(REWARD_INDEX, REWARD_INDEX, REWARD_INDEX);
             session.StartRun();
 
             for (var i = 0; i < 3; i++)
@@ -247,13 +247,13 @@ namespace WheelGame.Tests.EditMode
 
             session.Leave(_vault);
 
-            Assert.AreEqual(RewardAmount * 3, _inventory.GetCount("chest_small"));
+            Assert.AreEqual(REWARD_AMOUNT * 3, _inventory.GetCount("chest_small"));
         }
 
         [Test]
         public void StartRun_AfterBombWithoutLeaving_DepositsNothing()
         {
-            var session = CreateSession(RewardIndex, BombIndex);
+            var session = CreateSession(REWARD_INDEX, BOMB_INDEX);
             session.StartRun();
             SpinAndComplete(session);
             SpinAndComplete(session);
@@ -266,7 +266,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void CanLeave_WithSafeZonesOnly_IsFalseInNormalZoneAndTrueInSafeZone()
         {
-            var session = CreateSession(LeaveRule.SafeZonesOnly, RewardIndex, RewardIndex, RewardIndex, RewardIndex);
+            var session = CreateSession(LeaveRule.SafeZonesOnly, REWARD_INDEX, REWARD_INDEX, REWARD_INDEX, REWARD_INDEX);
             session.StartRun();
 
             Assert.IsFalse(session.CanLeave);
@@ -281,7 +281,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Spin_WhileSpinning_Throws()
         {
-            var session = CreateSession(RewardIndex);
+            var session = CreateSession(REWARD_INDEX);
             session.StartRun();
             session.Spin();
 
@@ -291,7 +291,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void StartRun_AfterCollecting_ClearsRewards()
         {
-            var session = CreateSession(RewardIndex);
+            var session = CreateSession(REWARD_INDEX);
             session.StartRun();
             SpinAndComplete(session);
 
@@ -310,7 +310,7 @@ namespace WheelGame.Tests.EditMode
         {
             return new WheelSession(
                 TestZones.CreateRules(),
-                new FixedWheelGenerator(_reward, RewardAmount, BombIndex),
+                new FixedWheelGenerator(_reward, REWARD_AMOUNT, BOMB_INDEX),
                 leaveRule,
                 new RevivePricing(GOLD, REVIVE_BASE_COST, REVIVE_COST_MULTIPLIER),
                 new FakeRandomProvider(spinIndices),

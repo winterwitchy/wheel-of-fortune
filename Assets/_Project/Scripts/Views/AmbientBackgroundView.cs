@@ -7,6 +7,8 @@ namespace WheelGame.Views
 {
     public sealed class AmbientBackgroundView : MonoBehaviour
     {
+        #region Serialized Fields
+
         [SerializeField] private List<Image> _blobs = new List<Image>();
         [SerializeField, Min(0f)] private float _driftDistance = 250f;
         [SerializeField, Min(0.1f)] private float _minDuration = 6f;
@@ -16,8 +18,16 @@ namespace WheelGame.Views
         [SerializeField, Min(0.1f)] private float _scaleDurationRatio = 0.8f;
         [SerializeField, Min(0.1f)] private float _fadeDurationRatio = 1.3f;
 
+        #endregion
+
+        #region Fields
+
         private readonly List<Vector2> _basePositions = new List<Vector2>();
         private readonly List<float> _baseAlphas = new List<float>();
+
+        #endregion
+
+        #region Unity Callbacks
 
         private void Awake()
         {
@@ -31,7 +41,9 @@ namespace WheelGame.Views
         private void OnEnable()
         {
             for (var i = 0; i < _blobs.Count; i++)
+            {
                 Animate(_blobs[i], _basePositions[i], _baseAlphas[i]);
+            }
         }
 
         private void OnDisable()
@@ -42,6 +54,10 @@ namespace WheelGame.Views
                 blob.DOKill();
             }
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void Animate(Image blob, Vector2 basePosition, float baseAlpha)
         {
@@ -73,5 +89,7 @@ namespace WheelGame.Views
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetLink(gameObject);
         }
+
+        #endregion
     }
 }

@@ -6,7 +6,13 @@ namespace WheelGame.Views
 {
     public sealed class ZoneCellView : MonoBehaviour
     {
+        #region Serialized Fields
+
         [SerializeField] private TMP_Text _numberText;
+
+        #endregion
+
+        #region Public Methods
 
         public void Show(int zone, Color color, float alpha)
         {
@@ -27,5 +33,7 @@ namespace WheelGame.Views
                 gameObject.SetActive(false);
             }
         }
+
+        #endregion
     }
 }

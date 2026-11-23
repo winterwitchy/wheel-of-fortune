@@ -6,11 +6,17 @@ namespace WheelGame.Presentation
 {
     public sealed class CurrencyPresenter : IPresenter
     {
+        #region Fields
+
         private readonly IEventBus _bus;
         private readonly IWallet _wallet;
         private readonly string _currencyId;
         private readonly IRewardIconProvider _icons;
         private readonly ICurrencyView _view;
+
+        #endregion
+
+        #region Constructors
 
         public CurrencyPresenter(IEventBus bus, IWallet wallet, string currencyId, IRewardIconProvider icons, ICurrencyView view)
         {
@@ -20,6 +26,10 @@ namespace WheelGame.Presentation
             _icons = icons;
             _view = view;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Initialize()
         {
@@ -33,6 +43,10 @@ namespace WheelGame.Presentation
             _bus.Unsubscribe<BalanceChangedEvent>(HandleBalanceChanged);
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void HandleBalanceChanged(BalanceChangedEvent message)
         {
             if (message.CurrencyId == _currencyId)
@@ -40,5 +54,7 @@ namespace WheelGame.Presentation
                 _view.Show(message.Balance);
             }
         }
+
+        #endregion
     }
 }

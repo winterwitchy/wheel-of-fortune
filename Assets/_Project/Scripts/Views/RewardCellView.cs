@@ -7,16 +7,26 @@ namespace WheelGame.Views
 {
     public sealed class RewardCellView : MonoBehaviour
     {
+        #region Serialized Fields
+
         [SerializeField] private Image _icon;
         [SerializeField] private TMP_Text _amountText;
         [SerializeField] private RectTransform _punchTarget;
         [SerializeField, Min(0f)] private float _punchScale = 0.2f;
         [SerializeField, Min(0f)] private float _punchDuration = 0.3f;
 
+        #endregion
+
+        #region Properties
+
         public RectTransform IconTransform
         {
             get { return _icon.rectTransform; }
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Show(Sprite icon, int amount)
         {
@@ -45,6 +55,10 @@ namespace WheelGame.Views
                 .SetLink(gameObject);
         }
 
+        #endregion
+
+        #region Unity Callbacks
+
         private void OnDisable()
         {
             if (_punchTarget)
@@ -52,5 +66,7 @@ namespace WheelGame.Views
                 _punchTarget.DOKill(true);
             }
         }
+
+        #endregion
     }
 }

@@ -5,8 +5,14 @@ namespace WheelGame.Core
 {
     public sealed class ProceduralWheelGenerator : IWheelGenerator
     {
+        #region Fields
+
         private readonly List<ZoneBand> _bands;
         private readonly IRandomProvider _random;
+
+        #endregion
+
+        #region Constructors
 
         public ProceduralWheelGenerator(IReadOnlyList<ZoneBand> bands, IRandomProvider random)
         {
@@ -19,6 +25,10 @@ namespace WheelGame.Core
             _bands.Sort(CompareByFirstZone);
             _random = random;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public IReadOnlyList<WheelSliceEntry> Generate(int zone, ZoneKind zoneKind)
         {
@@ -54,6 +64,10 @@ namespace WheelGame.Core
 
             return result;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private IReadOnlyList<SliceRule> GetComposition(int zone, ZoneKind zoneKind)
         {
@@ -91,5 +105,7 @@ namespace WheelGame.Core
         {
             return left.FirstZone.CompareTo(right.FirstZone);
         }
+
+        #endregion
     }
 }

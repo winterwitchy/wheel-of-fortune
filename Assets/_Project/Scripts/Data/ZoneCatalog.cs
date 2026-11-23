@@ -4,7 +4,13 @@ namespace WheelGame.Data
 {
     public sealed class ZoneCatalog
     {
+        #region Fields
+
         private readonly Dictionary<string, ZoneDefinition> _zones = new Dictionary<string, ZoneDefinition>();
+
+        #endregion
+
+        #region Constructors
 
         public ZoneCatalog(IReadOnlyList<ZoneDefinition> zones)
         {
@@ -17,9 +23,15 @@ namespace WheelGame.Data
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public ZoneVisuals GetVisuals(string zoneId)
         {
             return _zones[zoneId].Visuals;
         }
+
+        #endregion
     }
 }

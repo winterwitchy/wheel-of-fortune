@@ -7,10 +7,16 @@ namespace WheelGame.Presentation
 {
     public sealed class ZoneProgressPresenter : IPresenter
     {
+        #region Fields
+
         private readonly IEventBus _bus;
         private readonly WheelSession _session;
         private readonly ZoneCatalog _zones;
         private readonly IZoneProgressView _view;
+
+        #endregion
+
+        #region Constructors
 
         public ZoneProgressPresenter(IEventBus bus, WheelSession session, ZoneCatalog zones, IZoneProgressView view)
         {
@@ -19,6 +25,10 @@ namespace WheelGame.Presentation
             _zones = zones;
             _view = view;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Initialize()
         {
@@ -31,6 +41,10 @@ namespace WheelGame.Presentation
             _bus.Unsubscribe<ZoneStartedEvent>(HandleZoneStarted);
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void HandleZoneStarted(ZoneStartedEvent message)
         {
             _view.Show(message.Zone);
@@ -40,5 +54,7 @@ namespace WheelGame.Presentation
         {
             return _zones.GetVisuals(_session.GetZoneKind(zone).Id);
         }
+
+        #endregion
     }
 }

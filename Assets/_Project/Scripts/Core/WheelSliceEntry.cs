@@ -2,12 +2,18 @@ namespace WheelGame.Core
 {
     public sealed class WheelSliceEntry
     {
+        #region Constructors
+
         private WheelSliceEntry(SliceKind kind, RewardItem reward, int amount)
         {
             Kind = kind;
             Reward = reward;
             Amount = amount;
         }
+
+        #endregion
+
+        #region Properties
 
         public SliceKind Kind { get; }
 
@@ -20,6 +26,10 @@ namespace WheelGame.Core
             get { return Kind == SliceKind.Bomb; }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public static WheelSliceEntry CreateReward(RewardItem reward, int amount)
         {
             return new WheelSliceEntry(SliceKind.Reward, reward, amount);
@@ -29,5 +39,7 @@ namespace WheelGame.Core
         {
             return new WheelSliceEntry(SliceKind.Bomb, null, 0);
         }
+
+        #endregion
     }
 }

@@ -11,7 +11,14 @@ namespace WheelGame.Views
 {
     public sealed class WheelView : MonoBehaviour, IWheelView
     {
-        private const string SpinButtonName = "ui_button_spin";
+        #region Constants
+
+        private const string SPIN_BUTTON_NAME = "ui_button_spin";
+        private const float SLICE_ANGLE = 360f / WheelLayout.SLICE_COUNT;
+
+        #endregion
+
+        #region Serialized Fields
 
         [Header("References")]
         [SerializeField] private RectTransform _rotator;
@@ -31,6 +38,10 @@ namespace WheelGame.Views
         [Header("Visuals")]
         [SerializeField] private Sprite _bombSprite;
 
+        #endregion
+
+        #region Fields
+
         private readonly List<WheelSliceView> _slices = new List<WheelSliceView>();
         private Tween _spinTween;
         private bool _isSpinPending;
@@ -38,7 +49,9 @@ namespace WheelGame.Views
         private IEventBus _bus;
         private WheelSpinSettings _spinSettings;
 
-        private static float SliceAngle => 360f / WheelLayout.SLICE_COUNT;
+        #endregion
+
+        #region Public Methods
 
         public void Construct(IEventBus bus, IRewardIconProvider icons, WheelSpinSettings spinSettings)
         {
@@ -87,7 +100,7 @@ namespace WheelGame.Views
             _isSpinPending = true;
 
             var current = Mathf.Repeat(_rotator.localEulerAngles.z, 360f);
-            var target = sliceIndex * SliceAngle - _angleOffset;
+            var target = sliceIndex * SLICE_ANGLE - _angleOffset;
             var distance = Mathf.Repeat(current - target, 360f);
             var end = current - (_spinSettings.FullTurns * 360f + distance);
 
@@ -98,6 +111,25 @@ namespace WheelGame.Views
                 .OnComplete(HandleSpinTweenFinished)
                 .OnKill(HandleSpinTweenFinished);
         }
+
+        #endregion
+
+        #region Unity Callbacks
+
+        private void OnEnable()
+        {
+            _spinButton.onClick.AddListener(HandleSpinClicked);
+        }
+
+        private void OnDisable()
+        {
+            _spinButton.onClick.RemoveListener(HandleSpinClicked);
+            _isSpinPending = false;
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private void HandleSpinTweenFinished()
         {
@@ -112,17 +144,6 @@ namespace WheelGame.Views
             _bus.Publish(new SpinAnimationFinishedEvent());
         }
 
-        private void OnEnable()
-        {
-            _spinButton.onClick.AddListener(HandleSpinClicked);
-        }
-
-        private void OnDisable()
-        {
-            _spinButton.onClick.RemoveListener(HandleSpinClicked);
-            _isSpinPending = false;
-        }
-
         private void HandleSpinClicked()
         {
             _bus.Publish(new SpinRequestedEvent());
@@ -131,14 +152,16 @@ namespace WheelGame.Views
         private void CreateSlicesIfNeeded()
         {
             if (_slices.Count > 0)
+            {
                 return;
+            }
 
             for (var i = 0; i < WheelLayout.SLICE_COUNT; i++)
             {
                 var slice = Instantiate(_slicePrefab, _sliceContainer);
                 slice.name = $"ui_rect_wheel_slice_{i}";
 
-                var angle = _angleOffset - i * SliceAngle;
+                var angle = _angleOffset - i * SLICE_ANGLE;
                 var radians = angle * Mathf.Deg2Rad;
                 var sliceTransform = (RectTransform)slice.transform;
                 sliceTransform.anchoredPosition = new Vector2(-Mathf.Sin(radians), Mathf.Cos(radians)) * _sliceRadius;
@@ -156,11 +179,17 @@ namespace WheelGame.Views
             _titleText.color = visuals.TitleColor;
         }
 
+        #endregion
+
+        #region Editor
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            _spinButton = ButtonLookup.FindInChildren(this, SpinButtonName);
+            _spinButton = ButtonLookup.FindInChildren(this, SPIN_BUTTON_NAME);
         }
 #endif
+
+        #endregion
     }
 }

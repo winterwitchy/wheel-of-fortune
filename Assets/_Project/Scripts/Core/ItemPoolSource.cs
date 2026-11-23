@@ -5,10 +5,16 @@ namespace WheelGame.Core
 {
     public sealed class ItemPoolSource : IRewardSource
     {
+        #region Fields
+
         private readonly IReadOnlyList<RewardItem> _items;
         private readonly AmountFormula _amountFormula;
         private readonly bool _isUniquePerWheel;
         private IRewardSource _fallback;
+
+        #endregion
+
+        #region Constructors
 
         public ItemPoolSource(IReadOnlyList<RewardItem> items, AmountFormula amountFormula, bool isUniquePerWheel)
         {
@@ -21,6 +27,10 @@ namespace WheelGame.Core
             _amountFormula = amountFormula;
             _isUniquePerWheel = isUniquePerWheel;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void SetFallback(IRewardSource fallback)
         {
@@ -46,6 +56,10 @@ namespace WheelGame.Core
             draft.AddReward(PickOne(_items, random), GetAmount(zone, multiplier));
         }
 
+        #endregion
+
+        #region Private Methods
+
         private int GetAmount(int zone, int multiplier)
         {
             if (_amountFormula == null)
@@ -65,5 +79,7 @@ namespace WheelGame.Core
 
             return items[random.Range(0, items.Count)];
         }
+
+        #endregion
     }
 }

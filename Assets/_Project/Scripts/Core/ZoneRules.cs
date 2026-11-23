@@ -5,7 +5,13 @@ namespace WheelGame.Core
 {
     public sealed class ZoneRules
     {
+        #region Fields
+
         private readonly List<ZoneKind> _kinds;
+
+        #endregion
+
+        #region Constructors
 
         public ZoneRules(IReadOnlyList<ZoneKind> kinds)
         {
@@ -23,10 +29,18 @@ namespace WheelGame.Core
             }
         }
 
+        #endregion
+
+        #region Properties
+
         public IReadOnlyList<ZoneKind> Kinds
         {
             get { return _kinds; }
         }
+
+        #endregion
+
+        #region Public Methods
 
         public ZoneKind GetZoneKind(int zone)
         {
@@ -59,6 +73,10 @@ namespace WheelGame.Core
             return -1;
         }
 
+        #endregion
+
+        #region Private Methods
+
         private bool HasDefaultKind()
         {
             foreach (var kind in _kinds)
@@ -88,5 +106,7 @@ namespace WheelGame.Core
         {
             return right.Priority.CompareTo(left.Priority);
         }
+
+        #endregion
     }
 }

@@ -7,12 +7,18 @@ namespace WheelGame.Data
     [Serializable]
     public sealed class SliceOverride
     {
+        #region Serialized Fields
+
         [SerializeField] private string _label;
         [SerializeField, Min(1)] private int _zone = 1;
         [SerializeField, Range(0, WheelLayout.SLICE_COUNT - 1)] private int _sliceIndex;
         [SerializeField] private SliceKind _kind;
         [SerializeField] private RewardItemData _reward;
         [SerializeField, Min(1)] private int _amount = 1;
+
+        #endregion
+
+        #region Constructors
 
         public SliceOverride()
         {
@@ -26,6 +32,10 @@ namespace WheelGame.Data
             _reward = reward;
             _amount = amount;
         }
+
+        #endregion
+
+        #region Properties
 
         public int Zone
         {
@@ -75,6 +85,10 @@ namespace WheelGame.Data
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public void RefreshLabel()
         {
             var angle = _sliceIndex * 360 / WheelLayout.SLICE_COUNT;
@@ -88,6 +102,10 @@ namespace WheelGame.Data
             _label = $"Zone {_zone} · Slice {_sliceIndex} ({angle}°) · {content}";
         }
 
+        #endregion
+
+        #region Private Methods
+
         private string DescribeReward()
         {
             var rewardName = "None";
@@ -99,5 +117,7 @@ namespace WheelGame.Data
 
             return $"{rewardName} x{_amount}";
         }
+
+        #endregion
     }
 }

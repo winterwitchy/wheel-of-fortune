@@ -4,10 +4,16 @@ namespace WheelGame.Core
 {
     public sealed class AmountFormula
     {
+        #region Fields
+
         private readonly GrowthCurve _growth;
         private readonly int _divisor;
         private readonly int _offset;
         private readonly int _step;
+
+        #endregion
+
+        #region Constructors
 
         public AmountFormula(GrowthCurve growth, int divisor, int offset, int step)
         {
@@ -27,10 +33,18 @@ namespace WheelGame.Core
             _step = step;
         }
 
+        #endregion
+
+        #region Public Methods
+
         public int Evaluate(int zone)
         {
             return (Grow(zone) / _divisor + _offset) * _step;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private int Grow(int zone)
         {
@@ -46,5 +60,7 @@ namespace WheelGame.Core
 
             return zone;
         }
+
+        #endregion
     }
 }

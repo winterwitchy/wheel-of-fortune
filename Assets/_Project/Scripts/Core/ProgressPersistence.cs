@@ -6,12 +6,17 @@ namespace WheelGame.Core
 {
     public sealed class ProgressPersistence : IDisposable
     {
+        #region Fields
+
         private readonly IWallet _wallet;
         private readonly IInventory _inventory;
         private readonly IProgressStore _store;
         private readonly IEventBus _bus;
-
         private bool _isTracking;
+
+        #endregion
+
+        #region Constructors
 
         public ProgressPersistence(IWallet wallet, IInventory inventory, IProgressStore store, IEventBus bus)
         {
@@ -20,6 +25,10 @@ namespace WheelGame.Core
             _store = store;
             _bus = bus;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void Restore(string startingCurrencyId, int startingAmount)
         {
@@ -46,6 +55,10 @@ namespace WheelGame.Core
             _bus.Unsubscribe<InventoryChangedEvent>(HandleInventoryChanged);
             _isTracking = false;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void Apply(ProgressData data)
         {
@@ -118,5 +131,7 @@ namespace WheelGame.Core
                 target.Add(new ProgressEntry(pair.Key, pair.Value));
             }
         }
+
+        #endregion
     }
 }

@@ -5,7 +5,13 @@ namespace WheelGame.Core.Events
 {
     public sealed class EventBus : IEventBus
     {
+        #region Fields
+
         private readonly Dictionary<Type, List<Delegate>> _handlers = new Dictionary<Type, List<Delegate>>();
+
+        #endregion
+
+        #region Public Methods
 
         public void Subscribe<TEvent>(Action<TEvent> handler)
         {
@@ -58,5 +64,7 @@ namespace WheelGame.Core.Events
                 ((Action<TEvent>)handler).Invoke(message);
             }
         }
+
+        #endregion
     }
 }

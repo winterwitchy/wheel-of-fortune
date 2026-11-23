@@ -2,6 +2,8 @@ namespace WheelGame.Core
 {
     public sealed class TransientProgressStore : IProgressStore
     {
+        #region Public Methods
+
         public bool TryLoad(out ProgressData data)
         {
             data = null;
@@ -11,5 +13,7 @@ namespace WheelGame.Core
         public void Save(ProgressData data)
         {
         }
+
+        #endregion
     }
 }
