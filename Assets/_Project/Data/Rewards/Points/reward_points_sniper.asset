@@ -13,4 +13,10 @@ MonoBehaviour:
   m_Name: reward_points_sniper
   m_EditorClassIdentifier: 
   _id: points_sniper
-  _icon: {fileID: 21300000, guid: 6d4c6f9a686355a4b9da74e877f20001, type: 3}
+  _icon:
+    m_AssetGUID: 9e135256207b27940bcfcbbac839a644
+    m_SubObjectName: UI_Icons_Sniper_Points
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_EditorAssetChanged: 1
+  _isCurrency: 0

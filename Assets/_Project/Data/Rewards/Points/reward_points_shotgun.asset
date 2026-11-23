@@ -13,4 +13,10 @@ MonoBehaviour:
   m_Name: reward_points_shotgun
   m_EditorClassIdentifier: 
   _id: points_shotgun
-  _icon: {fileID: 21300000, guid: 6607299c6f02c824c8740a83eef8d01b, type: 3}
+  _icon:
+    m_AssetGUID: 9e135256207b27940bcfcbbac839a644
+    m_SubObjectName: UI_Icons_Shotgun_Points
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_EditorAssetChanged: 1
+  _isCurrency: 0

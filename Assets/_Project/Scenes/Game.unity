@@ -2601,6 +2601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6b3cfec2b2281c48afa8080a0cecc09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _iconImage: {fileID: 1432040581}
   _amountText: {fileID: 1657093690}
   _punchTarget: {fileID: 1652476289}
 --- !u!1 &657947469
@@ -4544,7 +4545,7 @@ GameObject:
   - component: {fileID: 1432040582}
   - component: {fileID: 1432040581}
   m_Layer: 5
-  m_Name: ui_image_gold_icon
+  m_Name: ui_image_gold_icon_value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4590,7 +4591,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 904e4f4f7aed73b4b8c2a6999d3c8ab9, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
