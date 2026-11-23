@@ -15,7 +15,7 @@ namespace WheelGame.Infrastructure
 
         [SerializeField] private GameConfig _config;
         [SerializeField] private GoldView _goldView;
-        [SerializeField] private ZoneInfoView _zoneInfoView;
+        [SerializeField] private ZoneProgressBarView _zoneProgressBarView;
         [SerializeField] private WheelView _wheelView;
         [SerializeField] private WheelEffectsView _wheelEffectsView;
         [SerializeField] private RewardsPanelView _rewardsPanelView;
@@ -42,7 +42,7 @@ namespace WheelGame.Infrastructure
 
             _presenter = new GamePresenter(
                 session, wallet, new RewardVault(wallet, inventory), goldId,
-                _goldView, _zoneInfoView, _wheelView, _wheelEffectsView,
+                _goldView, _zoneProgressBarView, _wheelView, _wheelEffectsView,
                 _rewardsPanelView, _bombPopupView, _cashOutPopupView);
 
             _presenter.Initialize();

@@ -64,7 +64,10 @@ namespace WheelGame.Core
                 return _collectedRewards.Count > 0;
             }
         }
-        public int NextRiskFreeZone => _zoneRules.GetNextRiskFreeZone(CurrentZone);
+        public int GetNextZoneOfType(ZoneType zoneType)
+        {
+            return _zoneRules.GetNextZoneOfType(CurrentZone, zoneType);
+        }
 
         public int ReviveCost
         {

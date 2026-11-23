@@ -13,7 +13,7 @@ namespace WheelGame.Presentation
         private readonly IRewardVault _vault;
         private readonly string _goldId;
         private readonly GoldView _goldView;
-        private readonly ZoneInfoView _zoneInfoView;
+        private readonly ZoneProgressBarView _zoneProgressBarView;
         private readonly WheelView _wheelView;
         private readonly WheelEffectsView _wheelEffectsView;
         private readonly RewardsPanelView _rewardsPanelView;
@@ -22,7 +22,7 @@ namespace WheelGame.Presentation
 
         public GamePresenter(
             WheelSession session, IWallet wallet, IRewardVault vault, string goldId,
-            GoldView goldView, ZoneInfoView zoneInfoView, WheelView wheelView, WheelEffectsView wheelEffectsView,
+            GoldView goldView, ZoneProgressBarView zoneProgressBarView, WheelView wheelView, WheelEffectsView wheelEffectsView,
             RewardsPanelView rewardsPanelView, BombPopupView bombPopupView, CashOutPopupView cashOutPopupView)
         {
             _session = session;
@@ -30,7 +30,7 @@ namespace WheelGame.Presentation
             _vault = vault;
             _goldId = goldId;
             _goldView = goldView;
-            _zoneInfoView = zoneInfoView;
+            _zoneProgressBarView = zoneProgressBarView;
             _wheelView = wheelView;
             _wheelEffectsView = wheelEffectsView;
             _rewardsPanelView = rewardsPanelView;
@@ -52,6 +52,7 @@ namespace WheelGame.Presentation
             _cashOutPopupView.ContinueClicked += HandleContinueClicked;
             _wallet.BalanceChanged += HandleBalanceChanged;
 
+            _zoneProgressBarView.Initialize(_session.GetZoneType);
             _goldView.Show(_wallet.GetBalance(_goldId));
             _session.StartRun();
         }
@@ -92,8 +93,7 @@ namespace WheelGame.Presentation
 
         private void HandleZoneStarted(int zone, ZoneType zoneType, IReadOnlyList<WheelSliceEntry> wheel)
         {
-            var nextRiskFreeZone = _session.NextRiskFreeZone;
-            _zoneInfoView.Show(zone, zoneType, nextRiskFreeZone, _session.GetZoneType(nextRiskFreeZone));
+            _zoneProgressBarView.Show(zone, _session.GetNextZoneOfType(ZoneType.Safe), _session.GetNextZoneOfType(ZoneType.Super));
             _wheelView.Show(zoneType, wheel);
             _wheelEffectsView.SetZoneType(zoneType);
             _rewardsPanelView.Show(_session.CollectedRewards);

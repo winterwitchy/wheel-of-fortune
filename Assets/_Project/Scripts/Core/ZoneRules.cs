@@ -30,12 +30,14 @@ namespace WheelGame.Core
             return ZoneType.Normal;
         }
 
-        public int GetNextRiskFreeZone(int zone)
+        public int GetNextZoneOfType(int zone, ZoneType zoneType)
         {
             var next = zone + 1;
 
-            while (GetZoneType(next) == ZoneType.Normal)
+            while (GetZoneType(next) != zoneType)
+            {
                 next++;
+            }
 
             return next;
         }
