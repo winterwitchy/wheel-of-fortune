@@ -28,7 +28,7 @@ namespace WheelGame.Views
         public void SetIcon(Sprite icon)
         {
             _iconImage.sprite = icon;
-            _iconImage.enabled = icon != null;
+            _iconImage.enabled = icon;
         }
 
         public void Show(int amount)
