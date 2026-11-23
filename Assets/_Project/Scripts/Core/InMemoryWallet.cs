@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Core
 {
     public sealed class InMemoryWallet : IWallet
     {
         private readonly Dictionary<string, int> _balances = new Dictionary<string, int>();
+        private readonly IEventBus _bus;
 
-        public event Action<string, int> BalanceChanged;
+        public InMemoryWallet(IEventBus bus)
+        {
+            _bus = bus;
+        }
 
         public IReadOnlyDictionary<string, int> Balances
         {
@@ -52,10 +57,7 @@ namespace WheelGame.Core
         {
             _balances[currencyId] = balance;
 
-            if (BalanceChanged != null)
-            {
-                BalanceChanged.Invoke(currencyId, balance);
-            }
+            _bus.Publish(new BalanceChangedEvent(currencyId, balance));
         }
     }
 }

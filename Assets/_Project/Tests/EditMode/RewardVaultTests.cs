@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Tests.EditMode
 {
@@ -8,8 +9,8 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Deposit_CurrencyGoesToWalletAndItemGoesToInventory()
         {
-            var wallet = new InMemoryWallet();
-            var inventory = new InMemoryInventory();
+            var wallet = new InMemoryWallet(new EventBus());
+            var inventory = new InMemoryInventory(new EventBus());
             var vault = new RewardVault(wallet, inventory);
             var cash = TestRewards.Create("cash", true);
             var chest = TestRewards.Create("chest_small", false);

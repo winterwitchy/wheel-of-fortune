@@ -1,15 +1,15 @@
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 using WheelGame.Data;
 
 namespace WheelGame.Views
 {
-    public sealed class WheelView : MonoBehaviour
+    public sealed class WheelView : MonoBehaviour, IWheelView
     {
         private const string SpinButtonName = "ui_button_spin";
 
@@ -36,15 +36,15 @@ namespace WheelGame.Views
 
         private readonly List<WheelSliceView> _slices = new List<WheelSliceView>();
         private Tween _spinTween;
-        private Action _spinCompleted;
+        private bool _isSpinPending;
         private IRewardIconProvider _icons;
-
-        public event Action SpinClicked;
+        private IEventBus _bus;
 
         private static float SliceAngle => 360f / WheelLayout.SLICE_COUNT;
 
-        public void Initialize(IRewardIconProvider icons)
+        public void Construct(IEventBus bus, IRewardIconProvider icons)
         {
+            _bus = bus;
             _icons = icons;
         }
 
@@ -78,14 +78,14 @@ namespace WheelGame.Views
             _spinButton.interactable = interactable;
         }
 
-        public void PlaySpin(int sliceIndex, Action onComplete)
+        public void PlaySpin(int sliceIndex)
         {
             if (_spinTween != null)
             {
                 _spinTween.Kill();
             }
 
-            _spinCompleted = onComplete;
+            _isSpinPending = true;
 
             var current = Mathf.Repeat(_rotator.localEulerAngles.z, 360f);
             var target = sliceIndex * SliceAngle - _angleOffset;
@@ -96,18 +96,21 @@ namespace WheelGame.Views
                 .DOLocalRotate(new Vector3(0f, 0f, end), _spinDuration, RotateMode.FastBeyond360)
                 .SetEase(_spinEase)
                 .SetLink(gameObject)
-                .OnComplete(HandleSpinTweenCompleted);
+                .OnComplete(HandleSpinTweenFinished)
+                .OnKill(HandleSpinTweenFinished);
         }
 
-        private void HandleSpinTweenCompleted()
+        private void HandleSpinTweenFinished()
         {
-            var callback = _spinCompleted;
-            _spinCompleted = null;
+            _spinTween = null;
 
-            if (callback != null)
+            if (!_isSpinPending)
             {
-                callback.Invoke();
+                return;
             }
+
+            _isSpinPending = false;
+            _bus.Publish(new SpinAnimationFinishedEvent());
         }
 
         private void OnEnable()
@@ -118,11 +121,12 @@ namespace WheelGame.Views
         private void OnDisable()
         {
             _spinButton.onClick.RemoveListener(HandleSpinClicked);
+            _isSpinPending = false;
         }
 
         private void HandleSpinClicked()
         {
-            SpinClicked?.Invoke();
+            _bus.Publish(new SpinRequestedEvent());
         }
 
         private void CreateSlicesIfNeeded()
@@ -157,13 +161,6 @@ namespace WheelGame.Views
         private void OnValidate()
         {
             _spinButton = ButtonLookup.FindInChildren(this, SpinButtonName);
-        }
-
-        [ContextMenu("Debug/Spin To Random Slice")]
-        private void DebugSpin()
-        {
-            CreateSlicesIfNeeded();
-            PlaySpin(UnityEngine.Random.Range(0, WheelLayout.SLICE_COUNT), null);
         }
 #endif
     }

@@ -1,11 +1,11 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class RewardsPanelView : MonoBehaviour
+    public sealed class RewardsPanelView : MonoBehaviour, IRewardsPanelView
     {
         #region Constants
 
@@ -27,15 +27,15 @@ namespace WheelGame.Views
 
         private RewardCellPool _cells;
         private IRewardIconProvider _icons;
+        private IEventBus _bus;
 
         #endregion
 
-        public event Action LeaveClicked;
-
         #region Public Methods
 
-        public void Initialize(IRewardIconProvider icons)
+        public void Construct(IEventBus bus, IRewardIconProvider icons)
         {
+            _bus = bus;
             _icons = icons;
         }
 
@@ -129,10 +129,7 @@ namespace WheelGame.Views
 
         private void HandleLeaveClicked()
         {
-            if (LeaveClicked != null)
-            {
-                LeaveClicked.Invoke();
-            }
+            _bus.Publish(new LeaveRequestedEvent());
         }
 
         #endregion

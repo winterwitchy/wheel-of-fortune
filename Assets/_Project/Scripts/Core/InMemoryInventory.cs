@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Core
 {
     public sealed class InMemoryInventory : IInventory
     {
         private readonly Dictionary<string, int> _items = new Dictionary<string, int>();
+        private readonly IEventBus _bus;
 
-        public event Action<string, int> ItemChanged;
+        public InMemoryInventory(IEventBus bus)
+        {
+            _bus = bus;
+        }
 
         public IReadOnlyDictionary<string, int> Items
         {
@@ -30,10 +35,7 @@ namespace WheelGame.Core
             var count = GetCount(itemId) + amount;
             _items[itemId] = count;
 
-            if (ItemChanged != null)
-            {
-                ItemChanged.Invoke(itemId, count);
-            }
+            _bus.Publish(new InventoryChangedEvent(itemId, count));
         }
     }
 }

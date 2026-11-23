@@ -1,12 +1,12 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class CashOutPopupView : PopupView
+    public sealed class CashOutPopupView : PopupView, ICashOutPopupView
     {
         private const string ContinueButtonName = "ui_button_popup_cashout_continue";
         private const string CELL_NAME_FORMAT = "ui_rect_popup_cashout_cell_{0}";
@@ -18,11 +18,11 @@ namespace WheelGame.Views
 
         private RewardCellPool _cells;
         private IRewardIconProvider _icons;
+        private IEventBus _bus;
 
-        public event Action ContinueClicked;
-
-        public void Initialize(IRewardIconProvider icons)
+        public void Construct(IEventBus bus, IRewardIconProvider icons)
         {
+            _bus = bus;
             _icons = icons;
         }
 
@@ -56,7 +56,7 @@ namespace WheelGame.Views
 
         private void HandleContinueClicked()
         {
-            ContinueClicked?.Invoke();
+            _bus.Publish(new ContinueRequestedEvent());
         }
 
 #if UNITY_EDITOR

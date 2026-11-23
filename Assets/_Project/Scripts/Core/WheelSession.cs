@@ -1,44 +1,60 @@
 using System;
 using System.Collections.Generic;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Core
 {
     public sealed class WheelSession
     {
+        #region Fields
+
         private readonly ZoneRules _zoneRules;
         private readonly IWheelGenerator _wheelGenerator;
         private readonly LeaveRule _leaveRule;
         private readonly RevivePricing _revivePricing;
         private readonly IRandomProvider _random;
+        private readonly IEventBus _bus;
         private readonly Dictionary<RewardItem, int> _collectedRewards = new Dictionary<RewardItem, int>();
 
         private SpinResult _pendingResult;
         private int _revivesUsed;
 
-        public WheelSession(ZoneRules zoneRules, IWheelGenerator wheelGenerator, LeaveRule leaveRule, RevivePricing revivePricing, IRandomProvider random)
+        #endregion
+
+        #region Constructor
+
+        public WheelSession(ZoneRules zoneRules, IWheelGenerator wheelGenerator, LeaveRule leaveRule, RevivePricing revivePricing, IRandomProvider random, IEventBus bus)
         {
             _zoneRules = zoneRules;
             _wheelGenerator = wheelGenerator;
             _leaveRule = leaveRule;
             _revivePricing = revivePricing;
             _random = random;
+            _bus = bus;
         }
 
-        public event Action StateChanged;
-        public event Action RunStarted;
-        public event Action<int, ZoneKind, IReadOnlyList<WheelSliceEntry>> ZoneStarted;
-        public event Action<SpinResult> SpinStarted;
-        public event Action<WheelSliceEntry> RewardCollected;
-        public event Action BombHit;
-        public event Action<IReadOnlyDictionary<RewardItem, int>> CashedOut;
+        #endregion
+
+        #region Properties
 
         public SessionState State { get; private set; }
-        public int CurrentZone { get; private set; }
-        public ZoneKind CurrentZoneKind { get; private set; }
-        public IReadOnlyList<WheelSliceEntry> CurrentWheel { get; private set; }
-        public IReadOnlyDictionary<RewardItem, int> CollectedRewards => _collectedRewards;
 
-        public bool CanSpin => State == SessionState.ReadyToSpin;
+        public int CurrentZone { get; private set; }
+
+        public ZoneKind CurrentZoneKind { get; private set; }
+
+        public IReadOnlyList<WheelSliceEntry> CurrentWheel { get; private set; }
+
+        public IReadOnlyDictionary<RewardItem, int> CollectedRewards
+        {
+            get { return _collectedRewards; }
+        }
+
+        public bool CanSpin
+        {
+            get { return State == SessionState.ReadyToSpin; }
+        }
+
         public bool CanLeave
         {
             get
@@ -59,86 +75,26 @@ namespace WheelGame.Core
 
         public bool HasCollectedRewards
         {
-            get
-            {
-                return _collectedRewards.Count > 0;
-            }
-        }
-        public int GetNextZoneOfKind(string kindId)
-        {
-            return _zoneRules.GetNextZoneOfKind(CurrentZone, kindId);
+            get { return _collectedRewards.Count > 0; }
         }
 
         public int ReviveCost
         {
-            get
-            {
-                return _revivePricing.GetCost(_revivesUsed);
-            }
+            get { return _revivePricing.GetCost(_revivesUsed); }
         }
+
+        #endregion
+
+        #region Queries
 
         public ZoneKind GetZoneKind(int zone)
         {
             return _zoneRules.GetZoneKind(zone);
         }
 
-        public void StartRun()
+        public int GetNextZoneOfKind(string kindId)
         {
-            _collectedRewards.Clear();
-            _revivesUsed = 0;
-
-            if (RunStarted != null)
-            {
-                RunStarted.Invoke();
-            }
-
-            EnterZone(1);
-        }
-
-        public SpinResult Spin()
-        {
-            if (!CanSpin)
-                throw new InvalidOperationException($"Cannot spin while {State}.");
-
-            var sliceIndex = _random.Range(0, CurrentWheel.Count);
-            _pendingResult = new SpinResult(sliceIndex, CurrentWheel[sliceIndex]);
-
-            SetState(SessionState.Spinning);
-            SpinStarted?.Invoke(_pendingResult);
-            return _pendingResult;
-        }
-
-        public void CompleteSpin()
-        {
-            if (State != SessionState.Spinning)
-                throw new InvalidOperationException($"Cannot complete a spin while {State}.");
-
-            var slice = _pendingResult.Slice;
-
-            if (slice.IsBomb)
-            {
-                SetState(SessionState.BombHit);
-                BombHit?.Invoke();
-                return;
-            }
-
-            AddReward(slice);
-            SetState(SessionState.CollectingReward);
-
-            if (RewardCollected != null)
-            {
-                RewardCollected.Invoke(slice);
-            }
-        }
-
-        public void FinishCollecting()
-        {
-            if (State != SessionState.CollectingReward)
-            {
-                throw new InvalidOperationException($"Cannot finish collecting while {State}.");
-            }
-
-            EnterZone(CurrentZone + 1);
+            return _zoneRules.GetNextZoneOfKind(CurrentZone, kindId);
         }
 
         public bool CanRevive(IWallet wallet)
@@ -149,6 +105,64 @@ namespace WheelGame.Core
             }
 
             return wallet.GetBalance(_revivePricing.CurrencyId) >= ReviveCost;
+        }
+
+        #endregion
+
+        #region Commands
+
+        public void StartRun()
+        {
+            _collectedRewards.Clear();
+            _revivesUsed = 0;
+            _bus.Publish(new RunStartedEvent());
+            EnterZone(1);
+        }
+
+        public SpinResult Spin()
+        {
+            if (!CanSpin)
+            {
+                throw new InvalidOperationException($"Cannot spin while {State}.");
+            }
+
+            var sliceIndex = _random.Range(0, CurrentWheel.Count);
+            _pendingResult = new SpinResult(sliceIndex, CurrentWheel[sliceIndex]);
+
+            SetState(SessionState.Spinning);
+            _bus.Publish(new SpinStartedEvent(_pendingResult));
+            return _pendingResult;
+        }
+
+        public void CompleteSpin()
+        {
+            if (State != SessionState.Spinning)
+            {
+                throw new InvalidOperationException($"Cannot complete a spin while {State}.");
+            }
+
+            var slice = _pendingResult.Slice;
+
+            if (slice.IsBomb)
+            {
+                SetState(SessionState.BombHit);
+                _bus.Publish(new BombHitEvent());
+                return;
+            }
+
+            AddReward(slice);
+            SetState(SessionState.CollectingReward);
+            _bus.Publish(new RewardCollectedEvent(_pendingResult.SliceIndex, slice, _collectedRewards[slice.Reward]));
+        }
+
+        public void FinishCollecting()
+        {
+            if (State != SessionState.CollectingReward)
+            {
+                throw new InvalidOperationException($"Cannot finish collecting while {State}.");
+            }
+
+            EnterZone(CurrentZone + 1);
         }
 
         public bool TryRevive(IWallet wallet)
@@ -183,12 +197,12 @@ namespace WheelGame.Core
             }
 
             SetState(SessionState.CashedOut);
-
-            if (CashedOut != null)
-            {
-                CashedOut.Invoke(cashedOutRewards);
-            }
+            _bus.Publish(new CashedOutEvent(cashedOutRewards));
         }
+
+        #endregion
+
+        #region Private Methods
 
         private bool IsLeaveAllowedInCurrentZone()
         {
@@ -207,7 +221,7 @@ namespace WheelGame.Core
             CurrentWheel = _wheelGenerator.Generate(zone, CurrentZoneKind);
 
             SetState(SessionState.ReadyToSpin);
-            ZoneStarted?.Invoke(CurrentZone, CurrentZoneKind, CurrentWheel);
+            _bus.Publish(new ZoneStartedEvent(CurrentZone, CurrentZoneKind, CurrentWheel));
         }
 
         private void AddReward(WheelSliceEntry slice)
@@ -219,7 +233,9 @@ namespace WheelGame.Core
         private void SetState(SessionState state)
         {
             State = state;
-            StateChanged?.Invoke();
+            _bus.Publish(new SessionStateChangedEvent(State, CanSpin, CanLeave));
         }
+
+        #endregion
     }
 }

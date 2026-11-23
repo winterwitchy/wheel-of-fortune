@@ -1,12 +1,12 @@
-using System;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class BombPopupView : PopupView
+    public sealed class BombPopupView : PopupView, IBombPopupView
     {
         private const string GiveUpButtonName = "ui_button_popup_bomb_give_up";
         private const string ReviveButtonName = "ui_button_popup_bomb_revive";
@@ -15,8 +15,12 @@ namespace WheelGame.Views
         [SerializeField] private Button _reviveButton;
         [SerializeField] private TMP_Text _reviveCostText;
 
-        public event Action GiveUpClicked;
-        public event Action ReviveClicked;
+        private IEventBus _bus;
+
+        public void Construct(IEventBus bus)
+        {
+            _bus = bus;
+        }
 
         public void Show(int reviveCost, bool canAffordRevive)
         {
@@ -39,12 +43,12 @@ namespace WheelGame.Views
 
         private void HandleGiveUpClicked()
         {
-            GiveUpClicked?.Invoke();
+            _bus.Publish(new GiveUpRequestedEvent());
         }
 
         private void HandleReviveClicked()
         {
-            ReviveClicked?.Invoke();
+            _bus.Publish(new ReviveRequestedEvent());
         }
 
 #if UNITY_EDITOR

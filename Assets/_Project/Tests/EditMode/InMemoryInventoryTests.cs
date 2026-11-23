@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Tests.EditMode
 {
@@ -8,7 +9,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Add_AccumulatesCountsPerItem()
         {
-            var inventory = new InMemoryInventory();
+            var inventory = new InMemoryInventory(new EventBus());
 
             inventory.Add("chest_small", 1);
             inventory.Add("molotov", 4);
@@ -22,9 +23,10 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Add_RaisesItemChanged()
         {
-            var inventory = new InMemoryInventory();
+            var bus = new EventBus();
+            var inventory = new InMemoryInventory(bus);
             var changedCount = 0;
-            inventory.ItemChanged += (id, count) => changedCount = count;
+            bus.Subscribe<InventoryChangedEvent>(message => changedCount = message.Count);
 
             inventory.Add("molotov", 4);
 

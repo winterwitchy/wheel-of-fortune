@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Core
 {
@@ -8,14 +9,16 @@ namespace WheelGame.Core
         private readonly IWallet _wallet;
         private readonly IInventory _inventory;
         private readonly IProgressStore _store;
+        private readonly IEventBus _bus;
 
         private bool _isTracking;
 
-        public ProgressPersistence(IWallet wallet, IInventory inventory, IProgressStore store)
+        public ProgressPersistence(IWallet wallet, IInventory inventory, IProgressStore store, IEventBus bus)
         {
             _wallet = wallet;
             _inventory = inventory;
             _store = store;
+            _bus = bus;
         }
 
         public void Restore(string startingCurrencyId, int startingAmount)
@@ -39,8 +42,8 @@ namespace WheelGame.Core
                 return;
             }
 
-            _wallet.BalanceChanged -= HandleProgressChanged;
-            _inventory.ItemChanged -= HandleProgressChanged;
+            _bus.Unsubscribe<BalanceChangedEvent>(HandleBalanceChanged);
+            _bus.Unsubscribe<InventoryChangedEvent>(HandleInventoryChanged);
             _isTracking = false;
         }
 
@@ -85,12 +88,17 @@ namespace WheelGame.Core
                 return;
             }
 
-            _wallet.BalanceChanged += HandleProgressChanged;
-            _inventory.ItemChanged += HandleProgressChanged;
+            _bus.Subscribe<BalanceChangedEvent>(HandleBalanceChanged);
+            _bus.Subscribe<InventoryChangedEvent>(HandleInventoryChanged);
             _isTracking = true;
         }
 
-        private void HandleProgressChanged(string id, int amount)
+        private void HandleBalanceChanged(BalanceChangedEvent message)
+        {
+            _store.Save(CreateSnapshot());
+        }
+
+        private void HandleInventoryChanged(InventoryChangedEvent message)
         {
             _store.Save(CreateSnapshot());
         }

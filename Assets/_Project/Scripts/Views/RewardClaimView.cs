@@ -1,12 +1,12 @@
-using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Views
 {
-    public sealed class RewardClaimView : MonoBehaviour
+    public sealed class RewardClaimView : MonoBehaviour, IRewardClaimView
     {
         #region Serialized Fields
 
@@ -26,17 +26,23 @@ namespace WheelGame.Views
         #region Private Fields
 
         private Sequence _sequence;
-        private Action _arrived;
+        private bool _isClaimPending;
+        private IEventBus _bus;
 
         #endregion
 
         #region Public Methods
 
-        public void Play(Sprite icon, int amount, Vector3 fromWorldPosition, RectTransform target, Action onArrived)
+        public void Construct(IEventBus bus)
+        {
+            _bus = bus;
+        }
+
+        public void Play(Sprite icon, int amount, Vector3 fromWorldPosition, RectTransform target)
         {
             StopCurrent();
 
-            _arrived = onArrived;
+            _isClaimPending = true;
             _icon.sprite = icon;
             _amountText.text = AmountFormatter.Format(amount);
             _flyer.position = fromWorldPosition;
@@ -63,7 +69,7 @@ namespace WheelGame.Views
 
         private void OnDisable()
         {
-            _arrived = null;
+            _isClaimPending = false;
             StopCurrent();
         }
 
@@ -86,13 +92,13 @@ namespace WheelGame.Views
             _sequence = null;
             _flyer.gameObject.SetActive(false);
 
-            var callback = _arrived;
-            _arrived = null;
-
-            if (callback != null)
+            if (!_isClaimPending)
             {
-                callback.Invoke();
+                return;
             }
+
+            _isClaimPending = false;
+            _bus.Publish(new ClaimAnimationFinishedEvent());
         }
 
         #endregion

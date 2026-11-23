@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Tests.EditMode
 {
@@ -12,7 +13,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Add_KeepsEveryCurrencySeparate()
         {
-            var wallet = new InMemoryWallet();
+            var wallet = new InMemoryWallet(new EventBus());
 
             wallet.Add(GOLD, 10);
             wallet.Add(CASH, 500);
@@ -26,7 +27,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void TrySpend_WithEnoughBalance_DeductsAndReturnsTrue()
         {
-            var wallet = new InMemoryWallet();
+            var wallet = new InMemoryWallet(new EventBus());
             wallet.Add(GOLD, 100);
 
             Assert.IsTrue(wallet.TrySpend(GOLD, 25));
@@ -36,7 +37,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void TrySpend_WithoutEnoughBalance_ReturnsFalseAndKeepsBalance()
         {
-            var wallet = new InMemoryWallet();
+            var wallet = new InMemoryWallet(new EventBus());
             wallet.Add(GOLD, 10);
             wallet.Add(CASH, 1000);
 
@@ -47,15 +48,16 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Add_RaisesBalanceChangedWithTheNewBalance()
         {
-            var wallet = new InMemoryWallet();
+            var bus = new EventBus();
+            var wallet = new InMemoryWallet(bus);
             wallet.Add(GOLD, 10);
             string changedId = null;
             var changedBalance = 0;
-            wallet.BalanceChanged += (id, balance) =>
+            bus.Subscribe<BalanceChangedEvent>(message =>
             {
-                changedId = id;
-                changedBalance = balance;
-            };
+                changedId = message.CurrencyId;
+                changedBalance = message.Balance;
+            });
 
             wallet.Add(GOLD, 40);
 
@@ -66,7 +68,7 @@ namespace WheelGame.Tests.EditMode
         [Test]
         public void Add_NegativeAmount_Throws()
         {
-            var wallet = new InMemoryWallet();
+            var wallet = new InMemoryWallet(new EventBus());
 
             Assert.Throws<ArgumentOutOfRangeException>(() => wallet.Add(GOLD, -1));
         }

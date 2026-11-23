@@ -1,12 +1,12 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using WheelGame.Core.Events;
 using WheelGame.Data;
 
 namespace WheelGame.Views
 {
-    public sealed class WheelEffectsView : MonoBehaviour
+    public sealed class WheelEffectsView : MonoBehaviour, IWheelEffectsView
     {
         [Header("References")]
         [SerializeField] private RectTransform _effectsRoot;
@@ -30,6 +30,14 @@ namespace WheelGame.Views
 
         private Tween _pulseTween;
         private Tween _raysTween;
+        private Tween _bombTween;
+        private bool _isBombPending;
+        private IEventBus _bus;
+
+        public void Construct(IEventBus bus)
+        {
+            _bus = bus;
+        }
 
         public void SetZoneVisuals(ZoneVisuals visuals)
         {
@@ -43,17 +51,32 @@ namespace WheelGame.Views
             StartRaysRotation(visuals.RaysSecondsPerTurn);
         }
 
-        public void PlayBomb(Action onComplete)
+        public void PlayBomb()
         {
             _shakeTarget.DOKill(true);
             _bombFlash.DOKill();
+            _isBombPending = true;
 
-            DOTween.Sequence()
+            _bombTween = DOTween.Sequence()
                 .Join(_shakeTarget.DOShakeAnchorPos(_bombDuration, _shakeStrength))
                 .Join(_bombFlash.DOFade(_flashAlpha, _bombDuration * 0.25f).SetLoops(2, LoopType.Yoyo))
                 .Join(_glow.DOColor(_bombGlowColor, _bombDuration * 0.5f).SetLoops(2, LoopType.Yoyo))
                 .SetLink(gameObject)
-                .OnComplete(() => onComplete?.Invoke());
+                .OnComplete(HandleBombTweenFinished)
+                .OnKill(HandleBombTweenFinished);
+        }
+
+        private void HandleBombTweenFinished()
+        {
+            _bombTween = null;
+
+            if (!_isBombPending)
+            {
+                return;
+            }
+
+            _isBombPending = false;
+            _bus.Publish(new BombEffectFinishedEvent());
         }
 
         private void OnEnable()
@@ -69,6 +92,8 @@ namespace WheelGame.Views
 
         private void OnDisable()
         {
+            _isBombPending = false;
+
             _pulseTween?.Kill();
             _raysTween?.Kill();
         }

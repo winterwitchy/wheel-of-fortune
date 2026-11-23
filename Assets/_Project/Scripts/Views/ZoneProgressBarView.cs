@@ -9,7 +9,7 @@ using WheelGame.Data;
 
 namespace WheelGame.Views
 {
-    public sealed class ZoneProgressBarView : MonoBehaviour
+    public sealed class ZoneProgressBarView : MonoBehaviour, IZoneProgressView
     {
         #region Nested Types
 

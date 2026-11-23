@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Tests.EditMode
 {
@@ -18,13 +19,15 @@ namespace WheelGame.Tests.EditMode
         private InMemoryWallet _wallet;
         private InMemoryInventory _inventory;
         private RewardVault _vault;
+        private EventBus _bus;
 
         [SetUp]
         public void SetUp()
         {
+            _bus = new EventBus();
             _reward = TestRewards.Create("chest_small", false);
             _wallet = CreateWallet(STARTING_GOLD);
-            _inventory = new InMemoryInventory();
+            _inventory = new InMemoryInventory(new EventBus());
             _vault = new RewardVault(_wallet, _inventory);
         }
 
@@ -84,7 +87,7 @@ namespace WheelGame.Tests.EditMode
         {
             var session = CreateSession();
             var zoneWhenRunStarted = -1;
-            session.RunStarted += () => zoneWhenRunStarted = session.CurrentZone;
+            _bus.Subscribe<RunStartedEvent>(message => zoneWhenRunStarted = session.CurrentZone);
 
             session.StartRun();
 
@@ -310,12 +313,13 @@ namespace WheelGame.Tests.EditMode
                 new FixedWheelGenerator(_reward, RewardAmount, BombIndex),
                 leaveRule,
                 new RevivePricing(GOLD, REVIVE_BASE_COST, REVIVE_COST_MULTIPLIER),
-                new FakeRandomProvider(spinIndices));
+                new FakeRandomProvider(spinIndices),
+                _bus);
         }
 
         private static InMemoryWallet CreateWallet(int gold)
         {
-            var wallet = new InMemoryWallet();
+            var wallet = new InMemoryWallet(new EventBus());
             wallet.Add(GOLD, gold);
             return wallet;
         }

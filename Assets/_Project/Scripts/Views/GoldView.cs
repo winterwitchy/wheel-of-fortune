@@ -5,18 +5,18 @@ using UnityEngine;
 
 namespace WheelGame.Views
 {
-    public sealed class GoldView : MonoBehaviour
+    public sealed class GoldView : MonoBehaviour, ICurrencyView
     {
         [SerializeField] private TMP_Text _amountText;
         [SerializeField] private RectTransform _punchTarget;
 
         private int _shownGold = -1;
 
-        public void Show(int gold)
+        public void Show(int amount)
         {
-            var changed = _shownGold >= 0 && gold != _shownGold;
-            _shownGold = gold;
-            _amountText.text = gold.ToString(CultureInfo.InvariantCulture);
+            var changed = _shownGold >= 0 && amount != _shownGold;
+            _shownGold = amount;
+            _amountText.text = amount.ToString(CultureInfo.InvariantCulture);
 
             if (!changed)
                 return;

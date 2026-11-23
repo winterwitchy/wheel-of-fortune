@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using WheelGame.Core;
+using WheelGame.Core.Events;
 
 namespace WheelGame.Tests.EditMode
 {
@@ -23,11 +24,19 @@ namespace WheelGame.Tests.EditMode
             }
         }
 
+        private EventBus _bus;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _bus = new EventBus();
+        }
+
         [Test]
         public void Restore_WithoutSave_GivesStartingCurrency()
         {
-            var wallet = new InMemoryWallet();
-            var persistence = new ProgressPersistence(wallet, new InMemoryInventory(), new MemoryProgressStore());
+            var wallet = new InMemoryWallet(_bus);
+            var persistence = new ProgressPersistence(wallet, new InMemoryInventory(_bus), new MemoryProgressStore(), _bus);
 
             persistence.Restore("gold", 100);
 
@@ -41,9 +50,9 @@ namespace WheelGame.Tests.EditMode
             store.Stored.Currencies.Add(new ProgressEntry("gold", 40));
             store.Stored.Currencies.Add(new ProgressEntry("cash", 900));
             store.Stored.Items.Add(new ProgressEntry("chest_small", 2));
-            var wallet = new InMemoryWallet();
-            var inventory = new InMemoryInventory();
-            var persistence = new ProgressPersistence(wallet, inventory, store);
+            var wallet = new InMemoryWallet(_bus);
+            var inventory = new InMemoryInventory(_bus);
+            var persistence = new ProgressPersistence(wallet, inventory, store, _bus);
 
             persistence.Restore("gold", 100);
 
@@ -57,9 +66,9 @@ namespace WheelGame.Tests.EditMode
         public void Changes_AfterRestore_AreSaved()
         {
             var store = new MemoryProgressStore();
-            var wallet = new InMemoryWallet();
-            var inventory = new InMemoryInventory();
-            var persistence = new ProgressPersistence(wallet, inventory, store);
+            var wallet = new InMemoryWallet(_bus);
+            var inventory = new InMemoryInventory(_bus);
+            var persistence = new ProgressPersistence(wallet, inventory, store, _bus);
             persistence.Restore("gold", 100);
 
             wallet.Add("cash", 250);
@@ -75,8 +84,8 @@ namespace WheelGame.Tests.EditMode
         public void Dispose_StopsSaving()
         {
             var store = new MemoryProgressStore();
-            var wallet = new InMemoryWallet();
-            var persistence = new ProgressPersistence(wallet, new InMemoryInventory(), store);
+            var wallet = new InMemoryWallet(_bus);
+            var persistence = new ProgressPersistence(wallet, new InMemoryInventory(_bus), store, _bus);
             persistence.Restore("gold", 100);
 
             persistence.Dispose();
