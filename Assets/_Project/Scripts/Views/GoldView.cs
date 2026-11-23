@@ -2,15 +2,22 @@ using System.Globalization;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace WheelGame.Views
 {
     public sealed class GoldView : MonoBehaviour, ICurrencyView
     {
+        [SerializeField] private Image _iconImage;
         [SerializeField] private TMP_Text _amountText;
         [SerializeField] private RectTransform _punchTarget;
 
         private int _shownGold = -1;
+
+        public void SetIcon(Sprite icon)
+        {
+            _iconImage.sprite = icon;
+        }
 
         public void Show(int amount)
         {

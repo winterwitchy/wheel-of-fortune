@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -37,12 +38,13 @@ namespace WheelGame.Infrastructure
 
         private readonly List<IPresenter> _presenters = new List<IPresenter>();
         private ProgressPersistence _persistence;
+        private AddressableIconProvider _icons;
 
         #endregion
 
         #region Unity Callbacks
 
-        private void Start()
+        private IEnumerator Start()
         {
             var bus = new EventBus();
             var random = new UnityRandomProvider();
@@ -60,7 +62,10 @@ namespace WheelGame.Infrastructure
             _persistence = new ProgressPersistence(wallet, inventory, CreateProgressStore(), bus);
             _persistence.Restore(goldId, _config.StartingGold);
 
-            var icons = new RewardIconCatalog(factory.KnownRewards);
+            _icons = new AddressableIconProvider();
+            yield return _icons.Load(factory.KnownRewards);
+
+            var icons = _icons;
             var zones = new ZoneCatalog(_config.Zones);
 
             _wheelView.Construct(bus, icons);
@@ -70,7 +75,7 @@ namespace WheelGame.Infrastructure
             _bombPopupView.Construct(bus);
             _cashOutPopupView.Construct(bus, icons);
 
-            _presenters.Add(new CurrencyPresenter(bus, wallet, goldId, _goldView));
+            _presenters.Add(new CurrencyPresenter(bus, wallet, goldId, icons, _goldView));
             _presenters.Add(new ZoneProgressPresenter(bus, session, zones, _zoneProgressBarView));
             _presenters.Add(new WheelPresenter(bus, session, zones, _wheelView, _wheelEffectsView));
             _presenters.Add(new RewardsPresenter(bus, session, icons, _rewardsPanelView, _rewardClaimView, _wheelView));
@@ -96,6 +101,11 @@ namespace WheelGame.Infrastructure
             if (_persistence != null)
             {
                 _persistence.Dispose();
+            }
+
+            if (_icons != null)
+            {
+                _icons.Dispose();
             }
         }
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace WheelGame.Data
 {
@@ -6,7 +7,7 @@ namespace WheelGame.Data
     public sealed class RewardItemData : ScriptableObject
     {
         [SerializeField] private string _id;
-        [SerializeField] private Sprite _icon;
+        [SerializeField] private AssetReferenceAtlasedSprite _icon;
         [SerializeField] private bool _isCurrency;
 
         public string Id
@@ -14,7 +15,7 @@ namespace WheelGame.Data
             get { return _id; }
         }
 
-        public Sprite Icon
+        public AssetReferenceAtlasedSprite Icon
         {
             get { return _icon; }
         }
@@ -27,6 +28,19 @@ namespace WheelGame.Data
         public bool HasId
         {
             get { return !string.IsNullOrEmpty(_id); }
+        }
+
+        public bool HasIcon
+        {
+            get
+            {
+                if (_icon == null)
+                {
+                    return false;
+                }
+
+                return _icon.RuntimeKeyIsValid();
+            }
         }
     }
 }

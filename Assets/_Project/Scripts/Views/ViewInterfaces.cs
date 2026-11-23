@@ -49,6 +49,8 @@ namespace WheelGame.Views
 
     public interface ICurrencyView
     {
+        void SetIcon(Sprite icon);
+
         void Show(int amount);
     }
 

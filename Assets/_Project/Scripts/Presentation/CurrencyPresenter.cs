@@ -9,19 +9,22 @@ namespace WheelGame.Presentation
         private readonly IEventBus _bus;
         private readonly IWallet _wallet;
         private readonly string _currencyId;
+        private readonly IRewardIconProvider _icons;
         private readonly ICurrencyView _view;
 
-        public CurrencyPresenter(IEventBus bus, IWallet wallet, string currencyId, ICurrencyView view)
+        public CurrencyPresenter(IEventBus bus, IWallet wallet, string currencyId, IRewardIconProvider icons, ICurrencyView view)
         {
             _bus = bus;
             _wallet = wallet;
             _currencyId = currencyId;
+            _icons = icons;
             _view = view;
         }
 
         public void Initialize()
         {
             _bus.Subscribe<BalanceChangedEvent>(HandleBalanceChanged);
+            _view.SetIcon(_icons.GetIcon(_currencyId));
             _view.Show(_wallet.GetBalance(_currencyId));
         }
 
