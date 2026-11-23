@@ -72,4 +72,9 @@ MonoBehaviour:
   _startingGold: 100
   _reviveBaseCost: 25
   _reviveCostMultiplier: 2
+  _targetFrameRate: 60
+  _wheelSpin:
+    _duration: 3.5
+    _fullTurns: 5
+    _ease: 12
   _sliceOverrides: []

@@ -46,6 +46,8 @@ namespace WheelGame.Infrastructure
 
         private IEnumerator Start()
         {
+            Application.targetFrameRate = _config.TargetFrameRate;
+
             var bus = new EventBus();
             var random = new UnityRandomProvider();
             var factory = new CoreModelFactory();
@@ -68,7 +70,7 @@ namespace WheelGame.Infrastructure
             var icons = _icons;
             var zones = new ZoneCatalog(_config.Zones);
 
-            _wheelView.Construct(bus, icons);
+            _wheelView.Construct(bus, icons, _config.WheelSpin);
             _wheelEffectsView.Construct(bus);
             _rewardsPanelView.Construct(bus, icons);
             _rewardClaimView.Construct(bus);

@@ -19,7 +19,12 @@ namespace WheelGame.Views
                 .DOFade(0f, _duration)
                 .SetId(this)
                 .SetLink(gameObject)
-                .OnComplete(() => gameObject.SetActive(false));
+                .OnComplete(HandleFadedOut);
+        }
+
+        private void HandleFadedOut()
+        {
+            gameObject.SetActive(false);
         }
 
         protected void Open()

@@ -23,6 +23,10 @@ namespace WheelGame.Data
         [SerializeField, Min(1)] private int _reviveBaseCost = 25;
         [SerializeField, Min(1f)] private float _reviveCostMultiplier = 2f;
 
+        [Header("Presentation")]
+        [SerializeField, Min(-1)] private int _targetFrameRate = 60;
+        [SerializeField] private WheelSpinSettings _wheelSpin = new WheelSpinSettings();
+
         [Header("Overrides")]
         [SerializeField] private List<SliceOverride> _sliceOverrides = new List<SliceOverride>();
 
@@ -63,6 +67,16 @@ namespace WheelGame.Data
         public float ReviveCostMultiplier
         {
             get { return _reviveCostMultiplier; }
+        }
+
+        public int TargetFrameRate
+        {
+            get { return _targetFrameRate; }
+        }
+
+        public WheelSpinSettings WheelSpin
+        {
+            get { return _wheelSpin; }
         }
 
         public IReadOnlyList<SliceOverride> SliceOverrides

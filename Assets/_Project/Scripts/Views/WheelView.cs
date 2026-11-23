@@ -27,9 +27,6 @@ namespace WheelGame.Views
         [SerializeField] private float _angleOffset;
 
         [Header("Spin")]
-        [SerializeField, Min(0.1f)] private float _spinDuration = 3.5f;
-        [SerializeField, Min(1)] private int _fullTurns = 5;
-        [SerializeField] private Ease _spinEase = Ease.OutQuart;
 
         [Header("Visuals")]
         [SerializeField] private Sprite _bombSprite;
@@ -39,13 +36,15 @@ namespace WheelGame.Views
         private bool _isSpinPending;
         private IRewardIconProvider _icons;
         private IEventBus _bus;
+        private WheelSpinSettings _spinSettings;
 
         private static float SliceAngle => 360f / WheelLayout.SLICE_COUNT;
 
-        public void Construct(IEventBus bus, IRewardIconProvider icons)
+        public void Construct(IEventBus bus, IRewardIconProvider icons, WheelSpinSettings spinSettings)
         {
             _bus = bus;
             _icons = icons;
+            _spinSettings = spinSettings;
         }
 
         public void Show(ZoneVisuals visuals, IReadOnlyList<WheelSliceEntry> wheel)
@@ -90,11 +89,11 @@ namespace WheelGame.Views
             var current = Mathf.Repeat(_rotator.localEulerAngles.z, 360f);
             var target = sliceIndex * SliceAngle - _angleOffset;
             var distance = Mathf.Repeat(current - target, 360f);
-            var end = current - (_fullTurns * 360f + distance);
+            var end = current - (_spinSettings.FullTurns * 360f + distance);
 
             _spinTween = _rotator
-                .DOLocalRotate(new Vector3(0f, 0f, end), _spinDuration, RotateMode.FastBeyond360)
-                .SetEase(_spinEase)
+                .DOLocalRotate(new Vector3(0f, 0f, end), _spinSettings.Duration, RotateMode.FastBeyond360)
+                .SetEase(_spinSettings.Ease)
                 .SetLink(gameObject)
                 .OnComplete(HandleSpinTweenFinished)
                 .OnKill(HandleSpinTweenFinished);
