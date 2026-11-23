@@ -31,5 +31,13 @@ namespace WheelGame.Tests.EditMode
         {
             Assert.AreSame(_sequence[expectedSequenceIndex], _progression.GetOption(zone, windowIndex));
         }
+
+        [TestCase(1, 3)]
+        [TestCase(31, 4)]
+        [TestCase(200, 6)]
+        public void GetUpgrade_ReturnsTheChestAboveTheWindow(int zone, int expectedSequenceIndex)
+        {
+            Assert.AreSame(_sequence[expectedSequenceIndex], _progression.GetUpgrade(zone));
+        }
     }
 }

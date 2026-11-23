@@ -5,18 +5,47 @@ namespace WheelGame.Core
 {
     public sealed class ProceduralWheelGenerator : IWheelGenerator
     {
-        private enum RewardSlot
+        #region Nested Types
+
+        private sealed class WheelDraft
         {
-            Cash,
-            Gold,
-            Points,
-            Consumable
+            private readonly Dictionary<RewardItemData, int> _occurrences = new Dictionary<RewardItemData, int>();
+
+            public WheelDraft(int capacity)
+            {
+                Slices = new List<WheelSliceEntry>(capacity);
+            }
+
+            public List<WheelSliceEntry> Slices { get; }
+
+            public bool HasUsed(RewardItemData reward)
+            {
+                return _occurrences.ContainsKey(reward);
+            }
+
+            public void AddReward(RewardItemData reward, int baseAmount)
+            {
+                _occurrences.TryGetValue(reward, out var occurrence);
+                _occurrences[reward] = occurrence + 1;
+                Slices.Add(WheelSliceEntry.CreateReward(reward, baseAmount * (occurrence + 1)));
+            }
+
+            public void AddBomb()
+            {
+                Slices.Add(WheelSliceEntry.CreateBomb());
+            }
         }
 
-        private const int RewardSlotCount = 4;
+        #endregion
+
+        #region Fields
 
         private readonly WheelGenerationSettings _settings;
         private readonly IRandomProvider _random;
+
+        #endregion
+
+        #region Constructor
 
         public ProceduralWheelGenerator(WheelGenerationSettings settings, IRandomProvider random)
         {
@@ -24,82 +53,132 @@ namespace WheelGame.Core
             _random = random;
         }
 
+        #endregion
+
+        #region Public Methods
+
         public IReadOnlyList<WheelSliceEntry> Generate(int zone, ZoneType zoneType)
         {
-            var multiplier = GetMultiplier(zoneType);
-            var slices = new List<WheelSliceEntry>(WheelLayout.SliceCount);
+            var band = _settings.GetBand(zone);
+            var draft = new WheelDraft(WheelLayout.SliceCount);
 
-            for (var slot = 0; slot < RewardSlotCount; slot++)
-                slices.Add(CreateRewardSlot((RewardSlot)slot, zone, multiplier));
-
-            slices.Add(CreateBonusSlot(zone, zoneType, multiplier));
-            slices.Add(CreateBombSlot(zoneType));
-
-            while (slices.Count < WheelLayout.SliceCount)
-                slices.Add(CreateChest(zone, zoneType));
-
-            Shuffle(slices);
-            return slices;
-        }
-
-        private int GetMultiplier(ZoneType zoneType)
-        {
-            return zoneType switch
-            {
-                ZoneType.Super => _settings.SuperMultiplier,
-                ZoneType.Safe => _settings.SafeMultiplier,
-                _ => 1
-            };
-        }
-
-        private WheelSliceEntry CreateRewardSlot(RewardSlot slot, int zone, int multiplier)
-        {
-            return slot switch
-            {
-                RewardSlot.Cash => WheelSliceEntry.CreateReward(_settings.CashReward, _settings.CashFormula.Evaluate(zone) * multiplier),
-                RewardSlot.Gold => WheelSliceEntry.CreateReward(_settings.GoldReward, _settings.GoldFormula.Evaluate(zone) * multiplier),
-                RewardSlot.Points => WheelSliceEntry.CreateReward(PickRandom(_settings.PointRewards), _settings.PointFormula.Evaluate(zone) * multiplier),
-                _ => WheelSliceEntry.CreateReward(PickRandom(_settings.ConsumableRewards), _settings.ConsumableFormula.Evaluate(zone) * multiplier)
-            };
-        }
-
-        private WheelSliceEntry CreateBonusSlot(int zone, ZoneType zoneType, int multiplier)
-        {
             if (zoneType == ZoneType.Super)
-                return CreateSkin(_settings.SuperSkinRewards);
-
-            var slot = (RewardSlot)_random.Range(0, RewardSlotCount);
-            return CreateRewardSlot(slot, zone, multiplier);
-        }
-
-        private WheelSliceEntry CreateBombSlot(ZoneType zoneType)
-        {
-            return zoneType switch
             {
-                ZoneType.Super => CreateSkin(_settings.SuperSkinRewards),
-                ZoneType.Safe => CreateSkin(_settings.SafeSkinRewards),
-                _ => WheelSliceEntry.CreateBomb()
-            };
+                AddComposition(draft, _settings.SuperSlices, zone, band, _settings.SuperMultiplier, _settings.SuperSkinRewards, true);
+            }
+            else if (zoneType == ZoneType.Safe)
+            {
+                AddSkin(draft, _settings.SafeSkinRewards, zone, false);
+                AddComposition(draft, band.Slices, zone, band, _settings.SafeMultiplier, band.SkinRewards, false);
+            }
+            else
+            {
+                draft.AddBomb();
+                AddComposition(draft, band.Slices, zone, band, 1, band.SkinRewards, false);
+            }
+
+            Shuffle(draft.Slices);
+            return draft.Slices;
         }
 
-        private WheelSliceEntry CreateSkin(IReadOnlyList<RewardItemData> pool)
+        #endregion
+
+        #region Composition
+
+        private void AddComposition(WheelDraft draft, SliceComposition composition, int zone, ZoneBand band, int multiplier, IReadOnlyList<RewardItemData> skinPool, bool isSuperZone)
         {
-            return WheelSliceEntry.CreateReward(PickRandom(pool), 1);
+            for (var i = 0; i < composition.Cash; i++)
+            {
+                draft.AddReward(_settings.CashReward, _settings.CashFormula.Evaluate(zone) * multiplier);
+            }
+
+            for (var i = 0; i < composition.Gold; i++)
+            {
+                draft.AddReward(_settings.GoldReward, _settings.GoldFormula.Evaluate(zone) * multiplier);
+            }
+
+            for (var i = 0; i < composition.Points; i++)
+            {
+                draft.AddReward(DrawPreferringUnused(draft, band.PointRewards), _settings.PointFormula.Evaluate(zone) * multiplier);
+            }
+
+            for (var i = 0; i < composition.Consumables; i++)
+            {
+                draft.AddReward(DrawPreferringUnused(draft, band.ConsumableRewards), _settings.ConsumableFormula.Evaluate(zone) * multiplier);
+            }
+
+            for (var i = 0; i < composition.Chests; i++)
+            {
+                AddChest(draft, zone, isSuperZone);
+            }
+
+            for (var i = 0; i < composition.Skins; i++)
+            {
+                AddSkin(draft, skinPool, zone, isSuperZone);
+            }
         }
 
-        private WheelSliceEntry CreateChest(int zone, ZoneType zoneType)
+        private void AddChest(WheelDraft draft, int zone, bool isSuperZone)
         {
-            if (zoneType == ZoneType.Super)
-                return WheelSliceEntry.CreateReward(_settings.SuperChestReward, 1);
+            if (isSuperZone)
+            {
+                draft.AddReward(_settings.SuperChestReward, 1);
+                return;
+            }
 
             var progression = _settings.ChestProgression;
             var windowIndex = _random.Range(0, progression.WindowSize);
-            return WheelSliceEntry.CreateReward(progression.GetOption(zone, windowIndex), 1);
+            draft.AddReward(progression.GetOption(zone, windowIndex), 1);
         }
 
-        private T PickRandom<T>(IReadOnlyList<T> items)
+        private void AddSkin(WheelDraft draft, IReadOnlyList<RewardItemData> pool, int zone, bool isSuperZone)
         {
-            return items[_random.Range(0, items.Count)];
+            var unused = CollectUnused(draft, pool);
+
+            if (unused.Count > 0)
+            {
+                draft.AddReward(unused[_random.Range(0, unused.Count)], 1);
+                return;
+            }
+
+            if (isSuperZone)
+            {
+                draft.AddReward(_settings.SuperChestReward, 1);
+                return;
+            }
+
+            draft.AddReward(_settings.ChestProgression.GetUpgrade(zone), 1);
+        }
+
+        #endregion
+
+        #region Random Helpers
+
+        private RewardItemData DrawPreferringUnused(WheelDraft draft, IReadOnlyList<RewardItemData> pool)
+        {
+            var unused = CollectUnused(draft, pool);
+
+            if (unused.Count > 0)
+            {
+                return unused[_random.Range(0, unused.Count)];
+            }
+
+            return pool[_random.Range(0, pool.Count)];
+        }
+
+        private static List<RewardItemData> CollectUnused(WheelDraft draft, IReadOnlyList<RewardItemData> pool)
+        {
+            var result = new List<RewardItemData>(pool.Count);
+
+            foreach (var reward in pool)
+            {
+                if (!draft.HasUsed(reward))
+                {
+                    result.Add(reward);
+                }
+            }
+
+            return result;
         }
 
         private void Shuffle(List<WheelSliceEntry> slices)
@@ -107,8 +186,12 @@ namespace WheelGame.Core
             for (var i = slices.Count - 1; i > 0; i--)
             {
                 var j = _random.Range(0, i + 1);
-                (slices[i], slices[j]) = (slices[j], slices[i]);
+                var temp = slices[i];
+                slices[i] = slices[j];
+                slices[j] = temp;
             }
         }
+
+        #endregion
     }
 }

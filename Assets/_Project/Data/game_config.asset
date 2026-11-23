@@ -31,35 +31,95 @@ MonoBehaviour:
       _divisor: 1
       _offset: 0
       _step: 1
-    _pointRewards:
-    - {fileID: 11400000, guid: 6f36ae45d9f1cae4b903beafce67d231, type: 2}
-    - {fileID: 11400000, guid: c925a91086472d74b877598ff996524e, type: 2}
-    - {fileID: 11400000, guid: 39bd86c6f4550e14dbf43d65d03b1e9d, type: 2}
-    - {fileID: 11400000, guid: d5e2877d215bd154b9664e49be8a8fdb, type: 2}
-    - {fileID: 11400000, guid: 6d80dd2817ffe3442b751867bed799c1, type: 2}
-    - {fileID: 11400000, guid: 82d13303741aa814ab0979162a5800c8, type: 2}
-    - {fileID: 11400000, guid: ce0b80dca3db2584ba69f0e1da5998bb, type: 2}
-    - {fileID: 11400000, guid: bd732c41cd9ac244b810dce3b98b4cf0, type: 2}
     _pointFormula:
       _growth: 1
       _divisor: 2
       _offset: 1
       _step: 5
-    _consumableRewards:
-    - {fileID: 11400000, guid: 07a06813f06889e4fb9651611e3d3310, type: 2}
-    - {fileID: 11400000, guid: 37bd8de7316c1164c97a2dca7e5b8d6d, type: 2}
-    - {fileID: 11400000, guid: d768e1aaff150a9429c0160b4283b284, type: 2}
-    - {fileID: 11400000, guid: 766c0be734e39f14ab48350e6b44df55, type: 2}
-    - {fileID: 11400000, guid: 765ffdba15a6c8b4d845e5553228aa2a, type: 2}
     _consumableFormula:
       _growth: 3
       _divisor: 1
       _offset: 0
       _step: 2
+    _bands:
+    - _firstZone: 1
+      _slices:
+        _cash: 2
+        _gold: 2
+        _points: 1
+        _consumables: 1
+        _chests: 1
+        _skins: 0
+      _pointRewards:
+      - {fileID: 11400000, guid: c925a91086472d74b877598ff996524e, type: 2}
+      - {fileID: 11400000, guid: 39bd86c6f4550e14dbf43d65d03b1e9d, type: 2}
+      - {fileID: 11400000, guid: 6f36ae45d9f1cae4b903beafce67d231, type: 2}
+      _consumableRewards:
+      - {fileID: 11400000, guid: 07a06813f06889e4fb9651611e3d3310, type: 2}
+      - {fileID: 11400000, guid: 765ffdba15a6c8b4d845e5553228aa2a, type: 2}
+      _skinRewards: []
+    - _firstZone: 11
+      _slices:
+        _cash: 1
+        _gold: 1
+        _points: 1
+        _consumables: 2
+        _chests: 2
+        _skins: 0
+      _pointRewards:
+      - {fileID: 11400000, guid: 82d13303741aa814ab0979162a5800c8, type: 2}
+      - {fileID: 11400000, guid: bd732c41cd9ac244b810dce3b98b4cf0, type: 2}
+      - {fileID: 11400000, guid: 6d80dd2817ffe3442b751867bed799c1, type: 2}
+      _consumableRewards:
+      - {fileID: 11400000, guid: 37bd8de7316c1164c97a2dca7e5b8d6d, type: 2}
+      - {fileID: 11400000, guid: 766c0be734e39f14ab48350e6b44df55, type: 2}
+      _skinRewards: []
+    - _firstZone: 21
+      _slices:
+        _cash: 1
+        _gold: 1
+        _points: 1
+        _consumables: 2
+        _chests: 1
+        _skins: 1
+      _pointRewards:
+      - {fileID: 11400000, guid: d5e2877d215bd154b9664e49be8a8fdb, type: 2}
+      - {fileID: 11400000, guid: ce0b80dca3db2584ba69f0e1da5998bb, type: 2}
+      _consumableRewards:
+      - {fileID: 11400000, guid: d768e1aaff150a9429c0160b4283b284, type: 2}
+      - {fileID: 11400000, guid: 37bd8de7316c1164c97a2dca7e5b8d6d, type: 2}
+      _skinRewards:
+      - {fileID: 11400000, guid: 86569333fb6e97d49a1d853dbad2dfd9, type: 2}
+    - _firstZone: 31
+      _slices:
+        _cash: 1
+        _gold: 1
+        _points: 0
+        _consumables: 1
+        _chests: 1
+        _skins: 3
+      _pointRewards:
+      - {fileID: 11400000, guid: d5e2877d215bd154b9664e49be8a8fdb, type: 2}
+      - {fileID: 11400000, guid: ce0b80dca3db2584ba69f0e1da5998bb, type: 2}
+      _consumableRewards:
+      - {fileID: 11400000, guid: d768e1aaff150a9429c0160b4283b284, type: 2}
+      - {fileID: 11400000, guid: 766c0be734e39f14ab48350e6b44df55, type: 2}
+      _skinRewards:
+      - {fileID: 11400000, guid: 86569333fb6e97d49a1d853dbad2dfd9, type: 2}
+      - {fileID: 11400000, guid: 72856841118b435419c8d6e2136e2162, type: 2}
+      - {fileID: 11400000, guid: 7a5fd182bad54144f934ec6ba910992b, type: 2}
     _safeSkinRewards:
     - {fileID: 11400000, guid: 86569333fb6e97d49a1d853dbad2dfd9, type: 2}
     - {fileID: 11400000, guid: 72856841118b435419c8d6e2136e2162, type: 2}
     - {fileID: 11400000, guid: 7a5fd182bad54144f934ec6ba910992b, type: 2}
+    _safeMultiplier: 2
+    _superSlices:
+      _cash: 1
+      _gold: 1
+      _points: 1
+      _consumables: 1
+      _chests: 2
+      _skins: 2
     _superSkinRewards:
     - {fileID: 11400000, guid: 18f411220a590934e9dd1def8a8bceb9, type: 2}
     - {fileID: 11400000, guid: 4bdc7c795d131e34b913356b5cc35a94, type: 2}
@@ -69,6 +129,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 04c6920791a514a43aca5351e8c9a1f0, type: 2}
     - {fileID: 11400000, guid: 84ba324df70a732499be9e2d0549a60f, type: 2}
     - {fileID: 11400000, guid: 2953f29754f39b54ba1a5dc57720ed86, type: 2}
+    _superChestReward: {fileID: 11400000, guid: b930d94dbd185d64e963b1e1cd0e6ab4, type: 2}
+    _superMultiplier: 5
     _chestProgression:
       _sequence:
       - {fileID: 11400000, guid: 25dd427d0bba6404687b2417c263d8dc, type: 2}
@@ -79,8 +141,5 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 76f2cdc1f804e2e4ca91803394c9d226, type: 2}
       - {fileID: 11400000, guid: b930d94dbd185d64e963b1e1cd0e6ab4, type: 2}
       _windowSize: 3
-      _eraLength: 30
-    _superChestReward: {fileID: 11400000, guid: b930d94dbd185d64e963b1e1cd0e6ab4, type: 2}
-    _safeMultiplier: 1
-    _superMultiplier: 5
+      _eraLength: 10
   _sliceOverrides: []

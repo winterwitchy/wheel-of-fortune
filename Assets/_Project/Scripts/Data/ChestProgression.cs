@@ -29,5 +29,12 @@ namespace WheelGame.Data
             var index = Math.Min(era + windowIndex, _sequence.Count - 1);
             return _sequence[index];
         }
+
+        public RewardItemData GetUpgrade(int zone)
+        {
+            var era = (zone - 1) / _eraLength;
+            var index = Math.Min(era + _windowSize, _sequence.Count - 1);
+            return _sequence[index];
+        }
     }
 }
