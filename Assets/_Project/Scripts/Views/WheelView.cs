@@ -101,7 +101,7 @@ namespace WheelGame.Views
                 .DOLocalRotate(new Vector3(0f, 0f, end - overshoot), _spinDuration, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutQuart));
             sequence.Append(_rotator
-                .DOLocalRotate(new Vector3(0f, 0f, end), _settleDuration, RotateMode.FastBeyond360)
+                .DOLocalRotate(new Vector3(0f, 0f, Mathf.Repeat(end, 360f)), _settleDuration, RotateMode.Fast)
                 .SetEase(Ease.InOutSine));
             sequence.SetLink(gameObject);
             sequence.OnComplete(HandleSpinTweenCompleted);
