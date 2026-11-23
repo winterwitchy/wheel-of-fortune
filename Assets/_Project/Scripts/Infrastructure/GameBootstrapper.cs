@@ -24,7 +24,7 @@ namespace WheelGame.Infrastructure
             var random = new UnityRandomProvider();
             var zoneRules = new ZoneRules(_config.SafeInterval, _config.SuperInterval);
             var proceduralGenerator = new ProceduralWheelGenerator(_config.Generation, random);
-            var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, _config.SliceOverrides, random);
+            var wheelGenerator = new OverriddenWheelGenerator(proceduralGenerator, _config.SliceOverrides, new WheelBombRule(random));
             var revivePricing = new RevivePricing(_config.ReviveBaseCost, _config.ReviveCostMultiplier);
             var session = new WheelSession(zoneRules, wheelGenerator, _config.LeaveRule, revivePricing, random);
             var wallet = new InMemoryWallet(_config.StartingGold);

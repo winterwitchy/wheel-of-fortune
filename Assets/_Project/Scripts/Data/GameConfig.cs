@@ -49,15 +49,90 @@ namespace WheelGame.Data
         {
             var zoneRules = new ZoneRules(_safeInterval, _superInterval);
             var usedSlots = new HashSet<(int, int)>();
+            var appliedByZone = new Dictionary<int, List<SliceOverride>>();
 
             foreach (var sliceOverride in _sliceOverrides)
             {
-                if (sliceOverride.IsBomb && zoneRules.GetZoneType(sliceOverride.Zone) != ZoneType.Normal)
+                if (!sliceOverride.IsValid)
+                {
+                    Debug.LogWarning($"{name}: zone {sliceOverride.Zone} slice {sliceOverride.SliceIndex} has no reward or a zero amount; it is ignored.", this);
+                    continue;
+                }
+
+                var zoneType = zoneRules.GetZoneType(sliceOverride.Zone);
+
+                if (sliceOverride.IsBomb && WheelBombRule.GetRequiredBombCount(zoneType) == 0)
+                {
                     Debug.LogWarning($"{name}: bomb override on zone {sliceOverride.Zone} is ignored because the zone is risk-free.", this);
+                    continue;
+                }
 
                 if (!usedSlots.Add((sliceOverride.Zone, sliceOverride.SliceIndex)))
+                {
                     Debug.LogWarning($"{name}: zone {sliceOverride.Zone} slice {sliceOverride.SliceIndex} has more than one override; the last one wins.", this);
+                }
+
+                if (!appliedByZone.TryGetValue(sliceOverride.Zone, out var zoneOverrides))
+                {
+                    zoneOverrides = new List<SliceOverride>();
+                    appliedByZone.Add(sliceOverride.Zone, zoneOverrides);
+                }
+
+                zoneOverrides.Add(sliceOverride);
             }
+
+            foreach (var pair in appliedByZone)
+            {
+                if (zoneRules.GetZoneType(pair.Key) == ZoneType.Normal)
+                {
+                    ValidateBombRule(pair.Key, pair.Value);
+                }
+            }
+        }
+
+        private void ValidateBombRule(int zone, List<SliceOverride> zoneOverrides)
+        {
+            var lastOrderBySlice = new Dictionary<int, int>();
+            var lastKindBySlice = new Dictionary<int, bool>();
+            var bombOverrideCount = 0;
+            var lastBombSlice = -1;
+
+            for (var order = 0; order < zoneOverrides.Count; order++)
+            {
+                var sliceOverride = zoneOverrides[order];
+                lastOrderBySlice[sliceOverride.SliceIndex] = order;
+                lastKindBySlice[sliceOverride.SliceIndex] = sliceOverride.IsBomb;
+
+                if (sliceOverride.IsBomb)
+                {
+                    bombOverrideCount++;
+                    lastBombSlice = sliceOverride.SliceIndex;
+                }
+            }
+
+            if (bombOverrideCount > 1)
+            {
+                Debug.LogWarning($"{name}: zone {zone} has {bombOverrideCount} bomb overrides; only the last one (slice {lastBombSlice}) stays a bomb.", this);
+            }
+
+            if (lastOrderBySlice.Count < WheelLayout.SliceCount || lastKindBySlice.ContainsValue(true))
+            {
+                return;
+            }
+
+            var oldestSlice = -1;
+            var oldestOrder = int.MaxValue;
+
+            foreach (var pair in lastOrderBySlice)
+            {
+                if (pair.Value < oldestOrder)
+                {
+                    oldestOrder = pair.Value;
+                    oldestSlice = pair.Key;
+                }
+            }
+
+            Debug.LogWarning($"{name}: zone {zone} overrides every slice with a reward; slice {oldestSlice}, the least recently set one, turns back into the bomb.", this);
         }
     }
 }

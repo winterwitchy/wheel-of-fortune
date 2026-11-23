@@ -28,9 +28,32 @@ namespace WheelGame.Data
         public int SliceIndex => _sliceIndex;
         public bool IsBomb => _kind == SliceKind.Bomb;
 
+        public bool IsValid
+        {
+            get
+            {
+                if (IsBomb)
+                {
+                    return true;
+                }
+
+                if (!_reward)
+                {
+                    return false;
+                }
+
+                return _amount >= 1;
+            }
+        }
+
         public WheelSliceEntry ToSliceEntry()
         {
-            return IsBomb ? WheelSliceEntry.CreateBomb() : WheelSliceEntry.CreateReward(_reward, _amount);
+            if (IsBomb)
+            {
+                return WheelSliceEntry.CreateBomb();
+            }
+
+            return WheelSliceEntry.CreateReward(_reward, _amount);
         }
 
         public void RefreshLabel()
@@ -42,7 +65,13 @@ namespace WheelGame.Data
 
         private string DescribeReward()
         {
-            var rewardName = _reward == null ? "None" : _reward.name;
+            var rewardName = "None";
+
+            if (_reward)
+            {
+                rewardName = _reward.name;
+            }
+
             return $"{rewardName} x{_amount}";
         }
     }

@@ -7,79 +7,79 @@ namespace WheelGame.Core
     {
         private readonly IWheelGenerator _inner;
         private readonly IReadOnlyList<SliceOverride> _overrides;
-        private readonly IRandomProvider _random;
+        private readonly WheelBombRule _bombRule;
 
-        public OverriddenWheelGenerator(IWheelGenerator inner, IReadOnlyList<SliceOverride> overrides, IRandomProvider random)
+        public OverriddenWheelGenerator(IWheelGenerator inner, IReadOnlyList<SliceOverride> overrides, WheelBombRule bombRule)
         {
             _inner = inner;
             _overrides = overrides;
-            _random = random;
+            _bombRule = bombRule;
         }
 
         public IReadOnlyList<WheelSliceEntry> Generate(int zone, ZoneType zoneType)
         {
-            var generated = _inner.Generate(zone, zoneType);
-            var zoneOverrides = CollectOverrides(zone, zoneType);
+            var original = _inner.Generate(zone, zoneType);
+            var slices = new List<WheelSliceEntry>(original);
+            var alterationOrder = CreateUnalteredOrder(slices.Count);
 
-            if (zoneOverrides.Count == 0)
-                return generated;
-
-            var slices = new List<WheelSliceEntry>(generated);
-            var overriddenIndices = new HashSet<int>();
-            var rewardIndices = new HashSet<int>();
-
-            foreach (var sliceOverride in zoneOverrides)
-            {
-                overriddenIndices.Add(sliceOverride.SliceIndex);
-
-                if (!sliceOverride.IsBomb)
-                    rewardIndices.Add(sliceOverride.SliceIndex);
-            }
-
-            RelocateDisplacedBomb(slices, rewardIndices, overriddenIndices);
-
-            foreach (var sliceOverride in zoneOverrides)
-                slices[sliceOverride.SliceIndex] = sliceOverride.ToSliceEntry();
+            ApplyOverrides(zone, zoneType, slices, alterationOrder);
+            _bombRule.Enforce(slices, original, alterationOrder, zoneType);
 
             return slices;
         }
 
-        private List<SliceOverride> CollectOverrides(int zone, ZoneType zoneType)
+        private void ApplyOverrides(int zone, ZoneType zoneType, List<WheelSliceEntry> slices, int[] alterationOrder)
         {
-            var result = new List<SliceOverride>();
+            var order = 0;
 
             foreach (var sliceOverride in _overrides)
             {
-                if (sliceOverride.Zone != zone)
+                if (!IsApplicable(sliceOverride, zone, zoneType, slices.Count))
+                {
                     continue;
+                }
 
-                if (sliceOverride.IsBomb && zoneType != ZoneType.Normal)
-                    continue;
+                slices[sliceOverride.SliceIndex] = sliceOverride.ToSliceEntry();
+                alterationOrder[sliceOverride.SliceIndex] = order;
+                order++;
+            }
+        }
 
-                result.Add(sliceOverride);
+        private static bool IsApplicable(SliceOverride sliceOverride, int zone, ZoneType zoneType, int sliceCount)
+        {
+            if (sliceOverride.Zone != zone)
+            {
+                return false;
+            }
+
+            if (sliceOverride.SliceIndex < 0 || sliceOverride.SliceIndex >= sliceCount)
+            {
+                return false;
+            }
+
+            if (!sliceOverride.IsValid)
+            {
+                return false;
+            }
+
+            if (sliceOverride.IsBomb && WheelBombRule.GetRequiredBombCount(zoneType) == 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static int[] CreateUnalteredOrder(int sliceCount)
+        {
+            var result = new int[sliceCount];
+
+            for (var i = 0; i < sliceCount; i++)
+            {
+                result[i] = WheelBombRule.UNALTERED;
             }
 
             return result;
-        }
-
-        private void RelocateDisplacedBomb(List<WheelSliceEntry> slices, HashSet<int> rewardIndices, HashSet<int> overriddenIndices)
-        {
-            var bombIndex = slices.FindIndex(slice => slice.IsBomb);
-            if (bombIndex < 0 || !rewardIndices.Contains(bombIndex))
-                return;
-
-            var freeIndices = new List<int>();
-            for (var i = 0; i < slices.Count; i++)
-            {
-                if (!overriddenIndices.Contains(i))
-                    freeIndices.Add(i);
-            }
-
-            if (freeIndices.Count == 0)
-                return;
-
-            var target = freeIndices[_random.Range(0, freeIndices.Count)];
-            (slices[bombIndex], slices[target]) = (slices[target], slices[bombIndex]);
         }
     }
 }
