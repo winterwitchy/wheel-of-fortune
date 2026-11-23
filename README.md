@@ -2,7 +2,7 @@
 
 Unity 2021.3.45f2 (LTS) · Android (IL2CPP, ARM64)
 
-**APK, video and screenshots:** see [Releases](../../releases).
+**APK, video and screenshots:** see [Releases](https://github.com/winterwitchy/wheel-of-fortune/releases#release-v1.0.0).
 
 ## Gameplay
 - Spin the wheel each zone; rewards scale with zone depth.
