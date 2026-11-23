@@ -68,3 +68,13 @@ Invalid configuration is reported as Console warnings as soon as `game_config` i
 ## Design notes
 - Progress is saved to `Application.persistentDataPath`. To use an in-memory save instead, change `SAVE_MODE` in `GameBootstrapperMono` to `SaveMode.Temporary`.
 - Unity 2021.3.45f2 (latest public 2021 LTS) does not support Android 15+ devices that use 16 KB memory pages; such devices require Unity 2022.3.56f1+.
+
+## The answer to the question
+UnityRandomProvider is the Unity-side implementation of the IRandomProvider interface defined in Core, and it wraps UnityEngine.Random.Range. It is created once in GameBootstrapperMono and passed through constructors to the session, the wheel generator and the bomb rule.
+
+The idea was proposed by AI, and given the explanation behind, I took the initiative of separating it this way for the following reasons:
+
+- **Keeping Core independent of Unity:** The WheelGame.Core assembly is compiled with noEngineReferences: true, so nothing in Core can call UnityEngine.Random. Randomness comes into Core from the outside through the interface, and the Unity dependency stays in the Infrastructure layer.
+- **Deterministic tests:** In the EditMode tests, FakeRandomProvider returns predefined values. This lets me fix the winning slice, the shuffle result and the slice the bomb moves to. For example, Generate_RewardOverrideOnBombSlot_MovesBombToUnalteredSlice checks exactly which slice the bomb ends up on, which is only possible because the randomness is controllable. Since UnityEngine.Random is static and global, doing this reliably in tests would be difficult.
+
+The cost is a small layer of indirection, but I think it is worth it for testability and a clean separation between layers.
